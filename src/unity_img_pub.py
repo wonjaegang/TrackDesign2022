@@ -10,7 +10,7 @@ from sensor_msgs.msg import CompressedImage
 cap = cv2.VideoCapture(0)
 
 #노드 선언
-rospy.init_node('hijaewan', anonymous=True)
+rospy.init_node('img_pub', anonymous=True)
 image_raw = rospy.Publisher('image_raw/compressed',CompressedImage, queue_size=1)
 imgdata = CompressedImage()
 
