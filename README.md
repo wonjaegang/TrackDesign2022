@@ -29,4 +29,6 @@ References for Dynamixel control.
 ## Tips
 
 - 컨트롤러, 헤드 마운트 pose 보려면 rosrun TrackDesign2022 visualization_demo 하면 됩니다
-- 
+
+
+- To Build this package successfully, you SHOULD download Dynamixel_SDK package and catkin_make it
