@@ -1,25 +1,9 @@
 #!/usr/bin/env python
 
-import sys
 import rospy
-import tty
-import termios
 from dynamixel_sdk import *
 from TrackDesign2022.srv import *
 from TrackDesign2022.msg import *
-
-fd = sys.stdin.fileno()
-old_settings = termios.tcgetattr(fd)
-
-
-def getch():
-    try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
-
 
 # Control table address
 ADDR_TORQUE_ENABLE = 24                    # Address of AX-18A. Depends on motor.
@@ -51,8 +35,6 @@ def open_serial_port():
         print("Succeeded to open the port, current port: %s" % DEVICENAME)
     except:
         print("Failed to open the port")
-        print("Press any key to terminate...")
-        getch()
         quit()
 
 
@@ -62,8 +44,6 @@ def set_baudrate():
         print("Succeeded to change the baudrate, current baudrate: %d" % BAUDRATE)
     except:
         print("Failed to change the baudrate")
-        print("Press any key to terminate...")
-        getch()
         quit()
 
 
@@ -71,13 +51,9 @@ def enable_torque():
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
     if dxl_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-        print("Press any key to terminate...")
-        getch()
         quit()
     elif dxl_error != 0:
         print("%s" % packetHandler.getRxPacketError(dxl_error))
-        print("Press any key to terminate...")
-        getch()
         quit()
     else:
         print("Torque enabled. Ready to get & set Position.")
@@ -96,8 +72,8 @@ def get_present_pos(req):
     return dxl_present_position
 
 
-def read_write_py_node():
-    rospy.init_node('read_write_py_node')
+def dynmixel_communicator():
+    rospy.init_node('dynmixel_communicator')
     rospy.Subscriber('set_position', SetPosition, set_goal_pos_callback)
     rospy.Service('get_position', GetPosition, get_present_pos)
     rospy.spin()
@@ -109,7 +85,7 @@ def main():
     set_baudrate()
     enable_torque()
 
-    read_write_py_node()
+    dynmixel_communicator()
 
 
 if __name__ == '__main__':
