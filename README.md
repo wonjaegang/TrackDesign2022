@@ -32,3 +32,6 @@ References for Dynamixel control.
 
 
 - To Build this package successfully, you SHOULD download Dynamixel_SDK package and catkin_make it
+
+
+- If you have some troubles with msg files, try [ source ~/catkin_ws/devel/setup.bash ] at EVERY terminal you're using.
