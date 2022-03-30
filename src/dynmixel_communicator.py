@@ -65,6 +65,17 @@ def set_goal_pos_callback(data):
     dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, data.id, ADDR_GOAL_POSITION, data.position)
 
 
+def set_goal_pos_speed_callback(data):
+    print("Set Speed of ID %s = %s" % (data.id, data.position))
+    temp_position = 512
+    temp_speed = 300
+    temp_data = [DXL_LOBYTE(DXL_LOWORD(temp_position)),
+                 DXL_HIBYTE(DXL_LOWORD(temp_position)),
+                 DXL_LOBYTE(DXL_LOWORD(temp_speed)),
+                 DXL_HIBYTE(DXL_LOWORD(temp_speed))]
+    dxl_comm_result, dxl_error = packetHandler.writeTxRx(portHandler, data.id, ADDR_GOAL_POSITION, 4, temp_data)
+
+
 def get_present_pos(req):
     dxl_present_position, dxl_comm_result, dxl_error =\
         packetHandler.read4ByteTxRx(portHandler, req.id, ADDR_PRESENT_POSITION)
@@ -74,7 +85,8 @@ def get_present_pos(req):
 
 def dynmixel_communicator():
     rospy.init_node('dynmixel_communicator')
-    rospy.Subscriber('set_position', SetPosition, set_goal_pos_callback)
+    rospy.Subscriber('/set_position', SetPosition, set_goal_pos_callback)
+    rospy.Subscriber('/set_position_and_speed', SetPosition, set_goal_pos_speed_callback)
     rospy.Service('get_position', GetPosition, get_present_pos)
     rospy.spin()
 

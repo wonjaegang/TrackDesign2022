@@ -6,25 +6,18 @@ from TrackDesign2022.msg import *
 
 
 def dynmixel_pose_pub():
-    pub = rospy.Publisher('set_position', SetPosition, queue_size=10)
+    speed_and_position_pub = rospy.Publisher('/set_position_and_speed', SetPosition, queue_size=10)
+    pose_pub = rospy.Publisher('/set_position', SetPosition, queue_size=10)
     rospy.init_node('dynmixel_pose_pub')
-    rate = rospy.Rate(50)  # hz
-    count = 0
-    direction = 1
-    msg = SetPosition()
-    while not rospy.is_shutdown():
-        goal_position = 2 * count
-        msg.id = 1
-        msg.position = goal_position
-        pub.publish(msg)
-        if count == 500:
-            direction = -1
-        elif count == 0:
-            direction = 1
-        else:
-            pass
-        count += direction
-        rate.sleep()
+
+    speed_and_position_msg = SetPosition()
+    speed_and_position_msg.id = 1
+    speed_and_position_msg.position = 500
+    speed_and_position_pub.publish(speed_and_position_msg)
+    # pose_msg = SetPosition()
+    # pose_msg.id = 1
+    # pose_msg.position = 1000
+    # pose_pub.publish(pose_msg)
 
 
 def main():
