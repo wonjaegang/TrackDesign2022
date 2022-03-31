@@ -7,7 +7,7 @@ from TrackDesign2022.msg import *
 
 # Control table address
 ADDR_TORQUE_ENABLE = 24                    # Address of AX-18A. Depends on motor.
-ADDR_GOAL_POSITION = 30
+ADDR_GOAL_POSITION = 30                    # Position value : 0 ~ 1023, Velocity value : 0 ~ 1023
 ADDR_PRESENT_POSITION = 36
 
 # Protocol version
@@ -17,12 +17,6 @@ PROTOCOL_VERSION = 1.0             # protocol of AX-18A. Depends on motor.
 DXL_ID = 1                         # Dynamixel ID : 1
 BAUDRATE = 1000000                 # Dynamixel default baudrate : 57600
 DEVICENAME = '/dev/ttyUSB0'        # Check which port is being used on your controller
-
-TORQUE_ENABLE = 1                  # Value for enabling the torque
-TORQUE_DISABLE = 0                 # Value for disabling the torque
-DXL_MINIMUM_POSITION_VALUE = 0     # Dynamixel will rotate between this value
-DXL_MAXIMUM_POSITION_VALUE = 1000  # Dynamixel would not move when the position value is out of movable range
-DXL_MOVING_STATUS_THRESHOLD = 20   # Dynamixel moving status threshold
 
 portHandler = PortHandler(DEVICENAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
@@ -48,7 +42,7 @@ def set_baudrate():
 
 
 def enable_torque():
-    dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+    dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, True)
     if dxl_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         quit()
@@ -60,20 +54,18 @@ def enable_torque():
 
 
 # ---------------------------------- Functions to communicate with DYNAMIXEL ----------------------------------
-def set_goal_pos_callback(data):
-    print("Set Goal Position of ID %s = %s" % (data.id, data.position))
+def set_position_callback(data):
+    print("ID %s - Goal Position: %s, Velocity: MAX" % (data.id, data.position))
     dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, data.id, ADDR_GOAL_POSITION, data.position)
 
 
-def set_goal_pos_speed_callback(data):
-    print("Set Speed of ID %s = %s" % (data.id, data.position))
-    temp_position = 512
-    temp_speed = 300
-    temp_data = [DXL_LOBYTE(DXL_LOWORD(temp_position)),
-                 DXL_HIBYTE(DXL_LOWORD(temp_position)),
-                 DXL_LOBYTE(DXL_LOWORD(temp_speed)),
-                 DXL_HIBYTE(DXL_LOWORD(temp_speed))]
-    dxl_comm_result, dxl_error = packetHandler.writeTxRx(portHandler, data.id, ADDR_GOAL_POSITION, 4, temp_data)
+def set_trajectory_callback(data):
+    print("ID %s - Goal Position: %s, Velocity: %s" % (data.id, data.position, data.velocity))
+    data_packet = [DXL_LOBYTE(DXL_LOWORD(data.position)),
+                   DXL_HIBYTE(DXL_LOWORD(data.position)),
+                   DXL_LOBYTE(DXL_LOWORD(data.velocity)),
+                   DXL_HIBYTE(DXL_LOWORD(data.velocity))]
+    dxl_comm_result, dxl_error = packetHandler.writeTxRx(portHandler, data.id, ADDR_GOAL_POSITION, 4, data_packet)
 
 
 def get_present_pos(req):
@@ -83,10 +75,10 @@ def get_present_pos(req):
     return dxl_present_position
 
 
-def dynmixel_communicator():
-    rospy.init_node('dynmixel_communicator')
-    rospy.Subscriber('/set_position', SetPosition, set_goal_pos_callback)
-    rospy.Subscriber('/set_position_and_speed', SetPosition, set_goal_pos_speed_callback)
+def dynamixel_communicator():
+    rospy.init_node('dynamixel_communicator')
+    rospy.Subscriber('/set_position', SetPosition, set_position_callback)
+    rospy.Subscriber('/set_trajectory', SetTrajectory, set_trajectory_callback)
     rospy.Service('get_position', GetPosition, get_present_pos)
     rospy.spin()
 
@@ -97,7 +89,7 @@ def main():
     set_baudrate()
     enable_torque()
 
-    dynmixel_communicator()
+    dynamixel_communicator()
 
 
 if __name__ == '__main__':
