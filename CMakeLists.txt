@@ -52,6 +52,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
     SetPosition.msg
+    SetTrajectory.msg
     SyncSetPosition.msg
     BulkSetItem.msg
 )
