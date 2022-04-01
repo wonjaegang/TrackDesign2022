@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import pygame
 from pygame.locals import *
 import rospy
@@ -11,7 +13,8 @@ rate = 50
 
 def main():
     pub = rospy.Publisher('/pygame_pose', Point, queue_size=10)
-    msg = Point
+    rospy.init_node('pygame_pose_pub')
+    msg = Point()
     msg.y = 0
     msg.z = 0
     while True:
