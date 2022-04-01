@@ -1,21 +1,17 @@
 #!/usr/bin/env python
 
 import rospy
-import numpy as np
 from TrackDesign2022.srv import *
 from TrackDesign2022.msg import *
+from geometry_msgs.msg import Point
 import matplotlib.pyplot as plt
 
 
 class TrajectoryPub:
-    def __init__(self, node_name):
-        self.node_name = node_name
+    def __init__(self):
         self.pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=10)
         self.msg = SetTrajectory()
         self.rate = 50
-
-    def initialize_node(self):
-        rospy.init_node(self.node_name)
 
     def pub_trajectory(self, dynamixel_id, goal_position, velocity):
         self.msg.id = dynamixel_id
@@ -110,6 +106,17 @@ class TrajectoryPub:
             rospy.Rate(self.rate).sleep()
 
 
+class GoalPositionSub:
+    def __init__(self):
+        self.sub = rospy.Subscriber('/pygame_pose', Point, self.pose_callback)
+        self.position = None
+        self.pose_pub = TrajectoryPub()
+
+    def pose_callback(self, msg):
+        self.position = int(msg.x)
+        self.pose_pub.set_position(1, self.position)
+
+
 # ------------------------------- Functions to create polynomial trajectory ---------------------------------
 def trajectory_linear(data_array, t):
     p1 = data_array[0]
@@ -137,21 +144,24 @@ def trajectory_cubic(data_array, t):
     return trajectory_position
 
 
-def plot_trajectory(data_array, func):
-    plot_point = 100
-    dt = data_array[-1] / 100
-    t_array = [dt * i for i in range(plot_point)]
-    traj = [func(data_array, dt * i) for i in range(plot_point)]
+def plot_trajectory(data_array, func, rate):
+    dt = 1 / rate
+    t_array = [dt * i for i in range(data_array[-1] * rate)]
+    traj = [func(data_array, dt * i) for i in range(data_array[-1] * rate)]
+    traj_d = [traj[i] - traj[i - 1] for i in range(1, len(traj))]
+    traj_d.insert(0, 0)
 
-    plt.plot(t_array, traj)
+    plt.figure(1)
+    plt.plot(t_array, traj, 'k.')
+
+    plt.figure(2)
+    plt.plot(t_array, traj_d, 'k.')
     plt.show()
 
 
-# ----------------------------------- Main function -----------------------------------
-def main():
-    trajectory_pub = TrajectoryPub('dynamixel_trajectory_pub')
-    trajectory_pub.initialize_node()
-
+# ---------------------------------------- Codes for 4th presentation ------------------------------------------------
+def presentation_4th():
+    trajectory_pub = TrajectoryPub()
     dynamixel_id = 1
     start_pos = 0
     end_pos = 1023
@@ -181,6 +191,14 @@ def main():
         else:
             break
         rospy.Rate(0.5).sleep()
+
+
+# ----------------------------------- Main function -----------------------------------
+def main():
+    rospy.init_node('dynamixel_trajectory_calculator')
+    # presentation_4th()
+    goal_position_sub = GoalPositionSub()
+    rospy.spin()
 
 
 if __name__ == '__main__':
