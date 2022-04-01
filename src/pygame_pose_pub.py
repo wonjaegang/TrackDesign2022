@@ -8,7 +8,7 @@ from geometry_msgs.msg import Point
 pygame.init()
 screen = pygame.display.set_mode((1024, 500))
 clock = pygame.time.Clock()
-rate = 50
+rate = 10
 
 
 def main():
