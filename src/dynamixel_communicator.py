@@ -4,6 +4,7 @@ import rospy
 from dynamixel_sdk import *
 from TrackDesign2022.srv import *
 from TrackDesign2022.msg import *
+from geometry_msgs.msg import Point
 
 # Control table address
 ADDR_TORQUE_ENABLE = 24                    # Address of AX-18A. Depends on motor.
@@ -68,6 +69,17 @@ def set_trajectory_callback(data):
     dxl_comm_result, dxl_error = packetHandler.writeTxRx(portHandler, data.id, ADDR_GOAL_POSITION, 4, data_packet)
 
 
+def simulator_position_callback(data):
+    pub = rospy.Publisher('/current_position', SetPosition, queue_size=10)
+    dxl_present_position, dxl_comm_result, dxl_error =\
+        packetHandler.read4ByteTxRx(portHandler, 1, ADDR_PRESENT_POSITION)
+    print("Present Position of ID %s = %s" % (1, dxl_present_position))
+    msg = SetPosition()
+    msg.id = 1
+    msg.position = dxl_present_position
+    pub.publish(msg)
+
+
 def get_present_pos(req):
     dxl_present_position, dxl_comm_result, dxl_error =\
         packetHandler.read4ByteTxRx(portHandler, req.id, ADDR_PRESENT_POSITION)
@@ -77,9 +89,10 @@ def get_present_pos(req):
 
 def dynamixel_communicator():
     rospy.init_node('dynamixel_communicator')
+    rospy.Subscriber('/pygame_pose', Point, simulator_position_callback)
     rospy.Subscriber('/set_position', SetPosition, set_position_callback)
     rospy.Subscriber('/set_trajectory', SetTrajectory, set_trajectory_callback)
-    rospy.Service('get_position', GetPosition, get_present_pos)
+    rospy.Service('/get_position', GetPosition, get_present_pos)
     rospy.spin()
 
 
