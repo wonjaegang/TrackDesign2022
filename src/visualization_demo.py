@@ -11,8 +11,8 @@ from std_msgs.msg import Header, Float64, ColorRGBA, Float64MultiArray
 class Visualization():
     def __init__(self):
 
-        self.left_hand_pub = rospy.Publisher('/rviz_left_hand', Marker, queue_size = 1)
-        self.right_hand_pub = rospy.Publisher('/rviz_right_hand', Marker, queue_size = 1)
+        self.left_hand_pub = rospy.Publisher('/rviz_left_point', Marker, queue_size = 1)
+        self.right_hand_pub = rospy.Publisher('/rviz_right_point', Marker, queue_size = 1)
         self.head_pub = rospy.Publisher('/rviz_head', Marker, queue_size = 1)
 
 
