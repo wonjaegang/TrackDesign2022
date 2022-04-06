@@ -11,14 +11,13 @@ main codes
 
     data_hub : Main codes for data. Declare subscriber/publisher instances.
     
-    oculus_sub : Subscribe Oculus Quest2 Data from ROS#.
-                    It includes VR pose, Controller pose.
+    oculus_sub : Subscribe Oculus Quest2 data from ROS#. It includes VR pose, controller pose.
     
-    study_rviz : Code for Rivz study 
+    visualization_demo : Display Oculus Quest2 data to Rviz.
     
-    visualization_demo : Display Oculus Quest2 Data to Rviz.
-    
-    dynamixel_controller : Communicate with Dynamixel. Read&write motor data.
+    dynamixel_communicator : Communicate Serialy with Dynamixel. Read&write motor data.
+
+    dynamixel_trajectory_calculator : Calculate trajectory
 
 ### msg
 References for topic messages.
@@ -35,3 +34,12 @@ References for Dynamixel control.
 
 
 - If you have some troubles with msg files, try [ source ~/catkin_ws/devel/setup.bash ] at EVERY terminal you're using.
+
+
+- If you have some troubles with ttyUSB0 - permission, follow https://valueelectronic.tistory.com/202
+
+
+- You should set minimum communication interval(1 [ms]).
+  - echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+  - Or,
+  - setserial /dev/ttyUSB0 low_latency
