@@ -8,48 +8,66 @@ from geometry_msgs.msg import Point
 
 class TrajectoryCalculator:
     def __init__(self):
+        # Declare subscriber, client, and publisher
         rospy.wait_for_service('/get_current_position')
         self.goal_position_sub = rospy.Subscriber('/pygame_pose', Point, self.goal_position_callback)
         self.current_position_client = rospy.ServiceProxy('/get_current_position', GetPosition)
         self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=10)
 
-        # self.goal_position_check = False
+        # Motor state values
         self.goal_position = None
         self.current_position = None
         self.trajectory_msg = SetTrajectory()
 
-        self.followup_time = 0.5
-        self.look_ahead_t = 0.1
+        # Control values
+        self.followup_time = 0.2
+        self.look_ahead_t = 0.05
+        self.derivative_t = 0.01
 
     def goal_position_callback(self, msg):
+        # Save subscribed goal position
         print("-" * 50)
         print("Subscribed Goal Position:", int(msg.x))
-        # self.goal_position_check = True
         self.goal_position = int(msg.x)
 
-        self.current_position = self.current_position_client(1)
+        # Get current position from server ar DYNAMIXEL communicator
+        self.current_position = self.current_position_client(1).position
         print("Requested Current Position:", self.current_position)
-        #     ------    Should check if the code is running properly before this point.
-        # Maybe... we need delay here.
 
+        # Calculate Trajectory
         trajectory = self.calculate_trajectory()
-        print("Calculated Trajectory:", trajectory)
 
+        # Publish message
         self.trajectory_msg.id = 1
         self.trajectory_msg.position = trajectory['position']
-        self.trajectory_msg.position = trajectory['velocity']
+        self.trajectory_msg.velocity = trajectory['velocity']
         self.trajectory_pub.publish(self.trajectory_msg)
         print("Published Trajectory:", trajectory)
         print("-" * 50)
-        # Maybe... we need delay here also.
 
     def calculate_trajectory(self):
+        def pose2vel(position_derivative):
+            return 50 / self.derivative_t / 114 * position_derivative
+
+        # linear position control
         position = self.goal_position
         velocity = 0
+
         return {'position': position, 'velocity': velocity}
 
 
 # ------------------------------- Function to create polynomial trajectory ---------------------------------
+def trajectory_linear(data_array, t):
+    p1 = data_array[0]
+    p2 = data_array[1]
+    tg = data_array[2]
+
+    a0 = p1
+    a1 = (p2 - p1) / tg
+    trajectory_position = a0 + a1 * t
+    return trajectory_position
+
+
 def trajectory_cubic(data_array, t):
     p1 = data_array[0]
     p2 = data_array[1]
