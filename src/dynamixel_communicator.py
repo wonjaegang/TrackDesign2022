@@ -77,7 +77,6 @@ def get_current_position(req):
 
 
 def dynamixel_communicator():
-    rospy.init_node('dynamixel_communicator')
     rospy.Subscriber('/set_position', SetPosition, set_position_callback, queue_size=10)
     rospy.Subscriber('/set_trajectory', SetTrajectory, set_trajectory_callback, queue_size=10)
     rospy.Service('/get_current_position', GetPosition, get_current_position)
@@ -90,6 +89,7 @@ def main():
     set_baudrate()
     enable_torque()
 
+    rospy.init_node('dynamixel_communicator')
     dynamixel_communicator()
 
 

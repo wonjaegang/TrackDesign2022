@@ -4,10 +4,14 @@ import rospy
 from TrackDesign2022.srv import *
 from TrackDesign2022.msg import *
 from geometry_msgs.msg import Point
+from geometry_msgs.msg import PoseStamped
 
 
 class TrajectoryCalculator:
     def __init__(self):
+        # Subscriber for presentation
+        self.right_pose_sub = rospy.Subscriber('/oculus/right_hand', PoseStamped, self.right_pose_callback, queue_size=1)
+
         # Declare subscriber, client, and publisher
         rospy.wait_for_service('/get_current_position')
         self.goal_position_sub = rospy.Subscriber('/pygame_pose', Point, self.goal_position_callback)
@@ -20,7 +24,7 @@ class TrajectoryCalculator:
         self.trajectory_msg = SetTrajectory()
 
         # Control values
-        self.followup_time = 0.2
+        self.followup_time = 0.5
         self.look_ahead_t = 0.05
         self.derivative_t = 0.01
 
@@ -47,14 +51,47 @@ class TrajectoryCalculator:
 
     def calculate_trajectory(self):
         def pose2vel(position_derivative):
-            return 50 / self.derivative_t / 114 * position_derivative
+            return 50 / self.followup_time / 114 * position_derivative
 
         # linear position control
         position = self.goal_position
         velocity = 0
 
+        # # linear velocity control
+        # position = self.goal_position
+        # velocity = abs(int(pose2vel((self.goal_position - self.current_position) / self.followup_time) + 0.5))
+        # velocity = 1 if velocity == 0 else velocity
+
         return {'position': position, 'velocity': velocity}
 
+    # Callback for presentation
+    def right_pose_callback(self, msg):
+        # Interpolation
+        goal = - msg.pose.position.z * 10000
+        if goal > 1023:
+            goal = 1023
+        elif goal < 0:
+            goal = 0
+
+        # Save subscribed goal position
+        print("-" * 50)
+        print("Subscribed Goal Position:", int(goal))
+        self.goal_position = int(goal)
+
+        # Get current position from server ar DYNAMIXEL communicator
+        self.current_position = self.current_position_client(1).position
+        print("Requested Current Position:", self.current_position)
+
+        # Calculate Trajectory
+        trajectory = self.calculate_trajectory()
+
+        # Publish message
+        self.trajectory_msg.id = 1
+        self.trajectory_msg.position = trajectory['position']
+        self.trajectory_msg.velocity = trajectory['velocity']
+        self.trajectory_pub.publish(self.trajectory_msg)
+        print("Published Trajectory:", trajectory)
+        print("-" * 50)
 
 # ------------------------------- Function to create polynomial trajectory ---------------------------------
 def trajectory_linear(data_array, t):
