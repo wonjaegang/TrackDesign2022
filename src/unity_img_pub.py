@@ -21,8 +21,8 @@ while True:
     #이미지 가져오기
     success, img1 = cap.read()   
     #
-    img = cv2.resize(img1, dsize=(0,0), fx=0.3, fy=0.3)
-    encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),30]
+    img = cv2.resize(img1, dsize=(0,0), fx=0.7, fy=0.7)
+    encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),90]
 
     #CompressedImage 메시지 작성
     imgdata.header.stamp = rospy.Time.now()
