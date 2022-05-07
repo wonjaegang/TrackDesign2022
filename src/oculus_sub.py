@@ -17,19 +17,31 @@ class oculus_sub:
 
     # callback
     def head_pose_callback(self, data):        
-        data.pose.position.x = data.pose.position.x*10
-        data.pose.position.y = data.pose.position.y*10
-        data.pose.position.z = data.pose.position.z*10 
-        self.head_pose = data
+        px = data.pose.position.x
+        py = data.pose.position.y
+        pz = data.pose.position.z
+        ox = data.pose.orientation.x
+        oy = data.pose.orientation.y
+        oz = data.pose.orientation.z
+        ow = data.pose.orientation.w
+        self.head_pose = [ow, ox, oy, oz, px, py, pz ]
 
     def left_pose_callback(self, data): 
-        data.pose.position.x = data.pose.position.x*10
-        data.pose.position.y = data.pose.position.y*10
-        data.pose.position.z = data.pose.position.z*10
-        self.left_pose = data
+        px = data.pose.position.x
+        py = data.pose.position.y
+        pz = data.pose.position.z
+        ox = data.pose.orientation.x
+        oy = data.pose.orientation.y
+        oz = data.pose.orientation.z
+        ow = data.pose.orientation.w
+        self.left_pose = [ow, ox, oy, oz, px, py, pz ]
 
     def right_pose_callback(self, data): 
-        data.pose.position.x = data.pose.position.x*10
-        data.pose.position.y = data.pose.position.y*10
-        data.pose.position.z = data.pose.position.z*10
-        self.right_pose = data
+        px = data.pose.position.x
+        py = data.pose.position.y
+        pz = data.pose.position.z
+        ox = data.pose.orientation.x
+        oy = data.pose.orientation.y
+        oz = data.pose.orientation.z
+        ow = data.pose.orientation.w
+        self.right_pose = [ow, ox, oy, oz, px, py, pz ]
