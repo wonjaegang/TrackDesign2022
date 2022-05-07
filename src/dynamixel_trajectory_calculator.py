@@ -35,7 +35,7 @@ class TrajectoryCalculator:
         self.goal_position = {i: rad2dynamixel_int(msg.data[i - 1]) for i in range(1, 7)}
 
         # Get current position from server at DYNAMIXEL communicator
-        self.goal_position = {i: self.current_position_client(i).position for i in range(1, 7)}
+        self.current_position = {i: self.current_position_client(i).position for i in range(1, 7)}
 
         # Calculate Trajectory & Publish
         for i in range(1, 7):
@@ -92,7 +92,7 @@ class TrajectoryCalculator:
 
         # linear position control
         position = self.goal_position[dynamixel_id]
-        velocity = 0
+        velocity = 300
 
         # # linear velocity control
         # position = self.goal_position
