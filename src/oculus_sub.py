@@ -14,7 +14,6 @@ class oculus_sub:
         self.left_pose_sub = rospy.Subscriber('/oculus/lpoint', PoseStamped,self.left_pose_callback,queue_size=1)
         self.right_pose_sub = rospy.Subscriber('/oculus/rpoint', PoseStamped,self.right_pose_callback,queue_size=1) 
 
-
     # callback
     def head_pose_callback(self, data):        
         px = data.pose.position.x
