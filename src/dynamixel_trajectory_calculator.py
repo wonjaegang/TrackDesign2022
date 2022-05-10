@@ -92,7 +92,7 @@ class TrajectoryCalculator:
 
         # linear position control
         position = self.goal_position[dynamixel_id]
-        velocity = 300
+        velocity = 100
 
         # # linear velocity control
         # position = self.goal_position

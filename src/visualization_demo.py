@@ -76,9 +76,9 @@ def main():
 
     while not rospy.is_shutdown():
         #print(oculus.head_pose)
-        Vis.left_hand_marker(oculus.left_pose)
-        Vis.right_hand_marker(oculus.right_pose)
-        Vis.head_marker(oculus.head_pose)
+        Vis.left_hand_marker(oculus.lpoint)
+        Vis.right_hand_marker(oculus.rpoint)
+        Vis.head_marker(oculus.pose)
         rospy.sleep(0.1)
 
 
