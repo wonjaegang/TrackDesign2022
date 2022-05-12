@@ -51,7 +51,7 @@ def main():
 
     goal_position = []
 
-    target = [-0.363, 0.609, 0.383, 0.592, 0.0, -0.25, -0.5]
+    target = [1, 0, 0, 0, -0.0, 0.0, 0.0]
 
     print(target)
 

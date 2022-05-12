@@ -14,7 +14,7 @@ from std_msgs.msg import Float32MultiArray
 
 
 
-def ik(self,target):
+def ik(target):
 
     inverse = chain.Chain.from_urdf_file("src/TrackDesign2022/urdf/meta_arm.xacro")
 
@@ -46,6 +46,7 @@ def main():
     while not rospy.is_shutdown():
 
         #goal.data = s.ik([-0.363, 0.609, 0.383, 0.592, 0.3, -0.1, -0.6])
+        print("current pose", oculus.right_pose)
         goal.data = ik(oculus.right_pose)
 
         goal_position_pub.publish(goal)

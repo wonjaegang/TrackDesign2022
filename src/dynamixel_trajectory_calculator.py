@@ -33,6 +33,7 @@ class TrajectoryCalculator:
 
         # Save subscribed goal position
         self.goal_position = {i: rad2dynamixel_int(msg.data[i - 1]) for i in range(1, 7)}
+        self.goal_position[4] = rad2dynamixel_int(msg.data[3]) + 307
 
         # Get current position from server at DYNAMIXEL communicator
         self.current_position = {i: self.current_position_client(i).position for i in range(1, 7)}
