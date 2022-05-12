@@ -10,7 +10,7 @@ ADDRESS = {'AX18A': {'TORQUE_ENABLE': 24,
                      'GOAL_POSITION': 30,
                      'PRESENT_POSITION': 36},
            'XM430': {'TORQUE_ENABLE': 64,
-                     'GOAL_POSITION': 116,
+                     'GOAL_POSITION': 112,             # GOAL_POSITION address is 116. revised for velocity control.
                      'PRESENT_POSITION': 132}}
 
 # Protocol version
@@ -21,18 +21,18 @@ BAUD_RATE = 1000000                 # Dynamixel default baudrate : 57600
 DEVICE_NAME = '/dev/ttyUSB0'        # Check which port is being used on your controller
 
 # Actuator initial setting. Use ID as keys.
-ACTUATOR_SETTING = {1: {'name': 'AX18A',
+ACTUATOR_SETTING = {1: {'name': 'XM430',
                         'initial_position_DGR': 0},
                     2: {'name': 'AX18A',
-                        'initial_position_DGR': 0},
-                    3: {'name': 'AX18A',
-                        'initial_position_DGR': 0},
-                    4: {'name': 'AX18A',
-                        'initial_position_DGR': 90},
-                    5: {'name': 'AX18A',
-                        'initial_position_DGR': 0},
-                    6: {'name': 'AX18A',
                         'initial_position_DGR': 0}}
+                    # 3: {'name': 'AX18A',
+                    #     'initial_position_DGR': 0},
+                    # 4: {'name': 'AX18A',
+                    #     'initial_position_DGR': 90},
+                    # 5: {'name': 'AX18A',
+                    #     'initial_position_DGR': 0},
+                    # 6: {'name': 'AX18A',
+                    #     'initial_position_DGR': 0}}
 
 portHandler = PortHandler(DEVICE_NAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
@@ -84,20 +84,53 @@ def set_position_callback(data):
 
 
 def set_trajectory_callback(data):
-    def deg2dynamixel_int(deg):
-        return int(deg / 300 * 1024 + 0.5) + 511
-    print("ID %s - Goal Position: %s, Velocity: %s" % (data.id, data.position, data.velocity))
-    position = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
-    data_packet = [DXL_LOBYTE(DXL_LOWORD(position)),
-                   DXL_HIBYTE(DXL_LOWORD(position)),
-                   DXL_LOBYTE(DXL_LOWORD(data.velocity)),
-                   DXL_HIBYTE(DXL_LOWORD(data.velocity))]
-    dxl_comm_result, dxl_error =\
-        packetHandler.writeTxRx(portHandler,
-                                data.id,
-                                ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
-                                4,
-                                data_packet)
+    if ACTUATOR_SETTING[data.id]['name'] == 'AX18A':
+        # Convert degree -> DYNAMIXEL integer(AX18A: 0 ~ 1023)
+        def deg2dynamixel_int(deg):
+            return int(deg / 300 * 1024 + 0.5) + 511
+
+        def dps2dynamixel_int(dps):
+            return int(dps / 6 / 0.111 + 0.5)
+
+        position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
+        velocity_int = dps2dynamixel_int(data.velocity)
+        print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+        data_packet = [DXL_LOBYTE(DXL_LOWORD(position_int)),
+                       DXL_HIBYTE(DXL_LOWORD(position_int)),
+                       DXL_LOBYTE(DXL_LOWORD(velocity_int)),
+                       DXL_HIBYTE(DXL_LOWORD(velocity_int))]
+        dxl_comm_result, dxl_error =\
+            packetHandler.writeTxRx(portHandler,
+                                    data.id,
+                                    ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
+                                    4,
+                                    data_packet)
+
+    if ACTUATOR_SETTING[data.id]['name'] == 'XM430':
+        # Convert degree -> DYNAMIXEL integer(XM430: 0 ~ 4095)
+        def deg2dynamixel_int(deg):
+            return int(deg / 360 * 4096 + 0.5) + 2047
+
+        def dps2dynamixel_int(dps):
+            return int(dps / 6 / 0.229 + 0.5)
+
+        position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
+        velocity_int = dps2dynamixel_int(data.velocity)
+        print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+        data_packet = [DXL_LOBYTE(DXL_LOWORD(velocity_int)),
+                       DXL_HIBYTE(DXL_LOWORD(velocity_int)),
+                       DXL_LOBYTE(DXL_HIWORD(velocity_int)),
+                       DXL_HIBYTE(DXL_HIWORD(velocity_int)),
+                       DXL_LOBYTE(DXL_LOWORD(position_int)),
+                       DXL_HIBYTE(DXL_LOWORD(position_int)),
+                       DXL_LOBYTE(DXL_HIWORD(position_int)),
+                       DXL_HIBYTE(DXL_HIWORD(position_int))]
+        dxl_comm_result, dxl_error =\
+            packetHandler.writeTxRx(portHandler,
+                                    data.id,
+                                    ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
+                                    8,
+                                    data_packet)
 
 
 def get_current_position(req):
@@ -105,7 +138,7 @@ def get_current_position(req):
         packetHandler.read4ByteTxRx(portHandler,
                                     req.id,
                                     ADDRESS[ACTUATOR_SETTING[req.id]['name']]['PRESENT_POSITION'])
-    print("Current Position of ID %s = %s" % (req.id, dxl_present_position))
+    print("Current Position(INT) of ID %s = %s" % (req.id, dxl_present_position))
     return dxl_present_position
 
 

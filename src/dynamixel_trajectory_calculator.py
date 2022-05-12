@@ -50,10 +50,10 @@ class TrajectoryCalculator:
         print("-" * 50)
         for i in range(1, 7):
             print("DYNAMIXEL ID %d data state:" % i)
-            print("    Subscribed Goal Position:", msg.data[i - 1])
-            print("    Quantized Goal Position:", self.goal_position[i])
-            print("    Requested Current Position:", self.current_position)
-            print("    Published Trajectory:", self.trajectory_msg[i])
+            print("    Goal Position(DGR):", round(self.goal_position[i], 4))
+            print("    Current Position(DGR):", round(self.current_position[i], 4))
+            print("    Published Position(DGR):", round(self.trajectory_msg[i].position, 4))
+            print("    Published Velocity(DPS):", round(self.trajectory_msg[i].velocity, 4))
         print("-" * 50)
 
     def calculate_trajectory(self, dynamixel_id):
@@ -62,7 +62,7 @@ class TrajectoryCalculator:
 
         # linear position control
         position = self.goal_position[dynamixel_id]
-        velocity = 100
+        velocity = 60
 
         # # linear velocity control
         # position = self.goal_position
