@@ -4,7 +4,6 @@ import rospy
 import math
 from TrackDesign2022.srv import *
 from TrackDesign2022.msg import *
-from geometry_msgs.msg import Point
 from std_msgs.msg import Float32MultiArray
 
 
@@ -12,7 +11,6 @@ class TrajectoryCalculator:
     def __init__(self):
         # Declare subscriber, client, and publisher
         rospy.wait_for_service('/get_current_position')
-        # self.pygame_goal_position_sub = rospy.Subscriber('/pygame_pose', Point, self.pygame_goal_position_callback)
         self.goal_position_sub = rospy.Subscriber('/goal_position', Float32MultiArray, self.goal_position_callback)
         self.current_position_client = rospy.ServiceProxy('/get_current_position', GetPosition)
         self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=10)
@@ -28,12 +26,11 @@ class TrajectoryCalculator:
         self.derivative_t = 0.01
 
     def goal_position_callback(self, msg):
-        def rad2dynamixel_int(radian):
-            return int(radian / math.pi * 180 / 300 * 1024 + 0.5) + 511
+        def rad2deg(radian):
+            return radian / math.pi * 180
 
         # Save subscribed goal position
-        self.goal_position = {i: rad2dynamixel_int(msg.data[i - 1]) for i in range(1, 7)}
-        self.goal_position[4] = rad2dynamixel_int(msg.data[3]) + 307
+        self.goal_position = {i: rad2deg(msg.data[i - 1]) for i in range(1, 7)}
 
         # Get current position from server at DYNAMIXEL communicator
         self.current_position = {i: self.current_position_client(i).position for i in range(1, 7)}
@@ -58,34 +55,6 @@ class TrajectoryCalculator:
             print("    Requested Current Position:", self.current_position)
             print("    Published Trajectory:", self.trajectory_msg[i])
         print("-" * 50)
-
-    # def pygame_goal_position_callback(self, msg):
-    #     # Save subscribed goal position
-    #     print("-" * 50)
-    #     print("Subscribed Goal Position:", int(msg.x))
-    #     # Should change the parameter later
-    #     for i in range(1, 7):
-    #         self.goal_position[i] = int(msg.x)
-    #
-    #     # Get current position from server at DYNAMIXEL communicator
-    #     # Should change the parameter later
-    #     for i in range(1, 3):
-    #         self.current_position = self.current_position_client(i).position
-    #         print("ID %d Requested Current Position:" % i, self.current_position)
-    #
-    #     # Should change the parameter later
-    #     for i in range(1, 3):
-    #         # Calculate Trajectory
-    #         trajectory = self.calculate_trajectory(i)
-    #
-    #         # Publish message
-    #         self.trajectory_msg.id = i
-    #         self.trajectory_msg.position = trajectory['position']
-    #         self.trajectory_msg.velocity = trajectory['velocity']
-    #         self.trajectory_pub.publish(self.trajectory_msg)
-    #         print("ID %d Published Trajectory:" % i, trajectory)
-    #
-    #     print("-" * 50)
 
     def calculate_trajectory(self, dynamixel_id):
         def pose2vel(position_derivative):
