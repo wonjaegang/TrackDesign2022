@@ -23,16 +23,16 @@ DEVICE_NAME = '/dev/ttyUSB0'        # Check which port is being used on your con
 # Actuator initial setting. Use ID as keys.
 ACTUATOR_SETTING = {1: {'name': 'XM430',
                         'initial_position_DGR': 0},
-                    2: {'name': 'AX18A',
+                    2: {'name': 'XM430',
+                        'initial_position_DGR': 0},
+                    3: {'name': 'AX18A',
+                        'initial_position_DGR': 0},
+                    4: {'name': 'AX18A',
+                        'initial_position_DGR': 90},
+                    5: {'name': 'AX18A',
+                        'initial_position_DGR': 0},
+                    6: {'name': 'AX18A',
                         'initial_position_DGR': 0}}
-                    # 3: {'name': 'AX18A',
-                    #     'initial_position_DGR': 0},
-                    # 4: {'name': 'AX18A',
-                    #     'initial_position_DGR': 90},
-                    # 5: {'name': 'AX18A',
-                    #     'initial_position_DGR': 0},
-                    # 6: {'name': 'AX18A',
-                    #     'initial_position_DGR': 0}}
 
 portHandler = PortHandler(DEVICE_NAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
