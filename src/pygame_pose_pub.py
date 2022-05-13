@@ -3,28 +3,64 @@
 import pygame
 from pygame.locals import *
 import rospy
-from geometry_msgs.msg import Point
+from TrackDesign2022.msg import *
 
 pygame.init()
-screen = pygame.display.set_mode((1024, 500))
+screen = pygame.display.set_mode((500, 500))
 clock = pygame.time.Clock()
 rate = 50
 
 
 def main():
-    pub = rospy.Publisher('/pygame_pose', Point, queue_size=10)
+    pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=10)
     rospy.init_node('pygame_pose_pub')
-    msg = Point()
-    msg.y = 0
-    msg.z = 0
+    msg = SetTrajectory()
+
+    # Set the motors which user wants to control
+    control_motors = [1, 2, 3, 4, 5, 6]
+
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 return
-        print(pygame.mouse.get_pos())
-        msg.x = pygame.mouse.get_pos()[0]
-        pub.publish(msg)
+
+        msg.id = 1
+        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 90
+        msg.velocity = 60
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 2
+        msg.position = (pygame.mouse.get_pos()[0]) / 500 * 90
+        msg.velocity = 60
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 3
+        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 150
+        msg.velocity = 400
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 4
+        msg.position = (pygame.mouse.get_pos()[0] - 500) / 500 * 90
+        msg.velocity = 200
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 5
+        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 150
+        msg.velocity = 400
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 6
+        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 90
+        msg.velocity = 400
+        if msg.id in control_motors:
+            pub.publish(msg)
+
         clock.tick(rate)
 
 
