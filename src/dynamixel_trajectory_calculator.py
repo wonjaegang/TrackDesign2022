@@ -20,11 +20,6 @@ class TrajectoryCalculator:
         self.current_position = {}
         self.trajectory_msg = {i: SetTrajectory() for i in range(1, 7)}
 
-        # Control values
-        self.followup_time = 0.5
-        self.look_ahead_t = 0.05
-        self.derivative_t = 0.01
-
     def goal_position_callback(self, msg):
         def rad2deg(radian):
             return radian / math.pi * 180
@@ -57,48 +52,12 @@ class TrajectoryCalculator:
         print("-" * 50)
 
     def calculate_trajectory(self, dynamixel_id):
-        def pose2vel(position_derivative):
-            return 50 / self.followup_time / 114 * position_derivative
+        velocity_dict = {1: 60, 2: 60, 3: 400, 4: 200, 5: 400, 6: 400}
 
-        # linear position control
         position = self.goal_position[dynamixel_id]
-        velocity = 100
-        if dynamixel_id in [3, 5, 6]:
-            velocity = 200
-
-        # # linear velocity control
-        # position = self.goal_position
-        # velocity = abs(int(pose2vel((self.goal_position - self.current_position) / self.followup_time) + 0.5))
-        # velocity = 1 if velocity == 0 else velocity
+        velocity = velocity_dict[dynamixel_id]
 
         return {'position': position, 'velocity': velocity}
-
-
-# ------------------------------- Function to create polynomial trajectory ---------------------------------
-def trajectory_linear(data_array, t):
-    p1 = data_array[0]
-    p2 = data_array[1]
-    tg = data_array[2]
-
-    a0 = p1
-    a1 = (p2 - p1) / tg
-    trajectory_position = a0 + a1 * t
-    return trajectory_position
-
-
-def trajectory_cubic(data_array, t):
-    p1 = data_array[0]
-    p2 = data_array[1]
-    v1 = data_array[2]
-    v2 = data_array[3]
-    tg = data_array[4]
-
-    a0 = p1
-    a1 = v1
-    a2 = 3 / (tg ** 2) * (p2 - p1) - 2 / tg * v1 - 1 / tg * v2
-    a3 = -2 / (tg ** 3) * (p2 - p1) + 1 / (tg ** 2) * (v2 + v1)
-    trajectory_position = a0 + a1 * t + a2 * (t ** 2) + a3 * (t ** 3)
-    return trajectory_position
 
 
 # -------------------------------------------- Main function -------------------------------------------------

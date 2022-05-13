@@ -8,7 +8,9 @@ from TrackDesign2022.msg import *
 # Control table address
 ADDRESS = {'AX18A': {'TORQUE_ENABLE': 24,
                      'GOAL_POSITION': 30,
-                     'PRESENT_POSITION': 36},
+                     'PRESENT_POSITION': 36,
+                     'COMPLIANCE_SLOPE': 28,
+                     'PUNCH': 48},
            'XM430': {'TORQUE_ENABLE': 64,
                      'GOAL_POSITION': 112,             # GOAL_POSITION address is 116. revised for velocity control.
                      'PRESENT_POSITION': 132}}
@@ -26,13 +28,25 @@ ACTUATOR_SETTING = {1: {'name': 'XM430',
                     2: {'name': 'XM430',
                         'initial_position_DGR': 0},
                     3: {'name': 'AX18A',
-                        'initial_position_DGR': 0},
+                        'initial_position_DGR': 0,
+                        'initial_CW_slope': 254,
+                        'initial_CCW_slope': 254,
+                        'initial_punch': 0},
                     4: {'name': 'AX18A',
-                        'initial_position_DGR': 90},
+                        'initial_position_DGR': 90,
+                        'initial_CW_slope': 90,
+                        'initial_CCW_slope': 90,
+                        'initial_punch': 100},
                     5: {'name': 'AX18A',
-                        'initial_position_DGR': 0},
+                        'initial_position_DGR': 0,
+                        'initial_CW_slope': 254,
+                        'initial_CCW_slope': 254,
+                        'initial_punch': 0},
                     6: {'name': 'AX18A',
-                        'initial_position_DGR': 0}}
+                        'initial_position_DGR': 0,
+                        'initial_CW_slope': 254,
+                        'initial_CCW_slope': 254,
+                        'initial_punch': 0}}
 
 portHandler = PortHandler(DEVICE_NAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
@@ -57,6 +71,23 @@ def set_baudrate():
         quit()
 
 
+def set_initial_value(dynamixel_id):
+    if ACTUATOR_SETTING[dynamixel_id]['name'] == 'AX18A':
+        packetHandler.write1ByteTxRx(portHandler,
+                                     dynamixel_id,
+                                     ADDRESS[ACTUATOR_SETTING[dynamixel_id]['name']]['COMPLIANCE_SLOPE'],
+                                     ACTUATOR_SETTING[dynamixel_id]['initial_CW_slope'])
+        packetHandler.write1ByteTxRx(portHandler,
+                                     dynamixel_id,
+                                     ADDRESS[ACTUATOR_SETTING[dynamixel_id]['name']]['COMPLIANCE_SLOPE'] + 1,
+                                     ACTUATOR_SETTING[dynamixel_id]['initial_CCW_slope'])
+        packetHandler.write2ByteTxRx(portHandler,
+                                     dynamixel_id,
+                                     ADDRESS[ACTUATOR_SETTING[dynamixel_id]['name']]['PUNCH'],
+                                     ACTUATOR_SETTING[dynamixel_id]['initial_punch'])
+        print("ID: %d Value initialized." % dynamixel_id)
+
+
 def enable_torque(dynamixel_id):
     dxl_comm_result, dxl_error =\
         packetHandler.write1ByteTxRx(portHandler,
@@ -76,11 +107,10 @@ def enable_torque(dynamixel_id):
 # ---------------------------------- Functions to communicate with DYNAMIXEL ----------------------------------
 def set_position_callback(data):
     print("ID %s - Goal Position: %s, Velocity: MAX" % (data.id, data.position))
-    dxl_comm_result, dxl_error =\
-        packetHandler.write4ByteTxRx(portHandler,
-                                     data.id,
-                                     ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
-                                     data.position)
+    packetHandler.write4ByteTxRx(portHandler,
+                                 data.id,
+                                 ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
+                                 data.position)
 
 
 def set_trajectory_callback(data):
@@ -99,12 +129,12 @@ def set_trajectory_callback(data):
                        DXL_HIBYTE(DXL_LOWORD(position_int)),
                        DXL_LOBYTE(DXL_LOWORD(velocity_int)),
                        DXL_HIBYTE(DXL_LOWORD(velocity_int))]
-        dxl_comm_result, dxl_error =\
-            packetHandler.writeTxRx(portHandler,
-                                    data.id,
-                                    ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
-                                    4,
-                                    data_packet)
+
+        packetHandler.writeTxRx(portHandler,
+                                data.id,
+                                ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
+                                4,
+                                data_packet)
 
     if ACTUATOR_SETTING[data.id]['name'] == 'XM430':
         # Convert degree -> DYNAMIXEL integer(XM430: 0 ~ 4095)
@@ -125,12 +155,11 @@ def set_trajectory_callback(data):
                        DXL_HIBYTE(DXL_LOWORD(position_int)),
                        DXL_LOBYTE(DXL_HIWORD(position_int)),
                        DXL_HIBYTE(DXL_HIWORD(position_int))]
-        dxl_comm_result, dxl_error =\
-            packetHandler.writeTxRx(portHandler,
-                                    data.id,
-                                    ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
-                                    8,
-                                    data_packet)
+        packetHandler.writeTxRx(portHandler,
+                                data.id,
+                                ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
+                                8,
+                                data_packet)
 
 
 def get_current_position(req):
@@ -139,7 +168,11 @@ def get_current_position(req):
                                     req.id,
                                     ADDRESS[ACTUATOR_SETTING[req.id]['name']]['PRESENT_POSITION'])
     print("Current Position(INT) of ID %s = %s" % (req.id, dxl_present_position))
-    return dxl_present_position
+    if ACTUATOR_SETTING[req.id]['name'] == 'AX18A':
+        return (dxl_present_position - 511) / 1024 * 300 - ACTUATOR_SETTING[req.id]['initial_position_DGR']
+    else:
+        return (dxl_present_position - 2047) / 4096 * 360 - ACTUATOR_SETTING[req.id]['initial_position_DGR']
+
 
 
 def dynamixel_communicator():
@@ -154,6 +187,7 @@ def main():
     open_serial_port()
     set_baudrate()
     for dynamixel_id in ACTUATOR_SETTING.keys():
+        set_initial_value(dynamixel_id)
         enable_torque(dynamixel_id)
 
     rospy.init_node('dynamixel_communicator')
