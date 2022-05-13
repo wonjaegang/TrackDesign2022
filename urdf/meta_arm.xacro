@@ -193,7 +193,7 @@
   <parent link="link2_1"/>
   <child link="link3_1"/>
   <axis xyz="0.0 -1.0 0.0"/>
-  <limit upper="0.0" lower="-1.745329" effort="100" velocity="100"/>
+  <limit upper="2.617994" lower="-2.617994" effort="100" velocity="100"/>
 </joint>
 
 <joint name="joint4" type="revolute">
@@ -201,7 +201,7 @@
   <parent link="link3_1"/>
   <child link="link4_1"/>
   <axis xyz="-1.0 -0.0 -0.0"/>
-  <limit upper="1.745329" lower="0.0" effort="100" velocity="100"/>
+  <limit upper="0.0" lower="-1.745329" effort="100" velocity="100"/>
 </joint>
 
 <joint name="joint5" type="revolute">
@@ -209,7 +209,7 @@
   <parent link="link4_1"/>
   <child link="link5_1"/>
   <axis xyz="0.0 0.0 1.0"/>
-  <limit upper="0.0" lower="-3.141593" effort="100" velocity="100"/>
+  <limit upper="2.617994" lower="-2.617994" effort="100" velocity="100"/>
 </joint>
 
 <joint name="joint6" type="revolute">
@@ -220,7 +220,7 @@
   <limit upper="1.570796" lower="-1.570796" effort="100" velocity="100"/>
 </joint>
 
-<joint name="point" type="revolute">
+<joint name="point" type="fixed">
   <origin xyz="-0.021 -0.0 0.035" rpy="0 0 0"/>
   <parent link="link6_1"/>
   <child link="point_2"/>
