@@ -46,7 +46,31 @@ ACTUATOR_SETTING = {1: {'name': 'XM430',
                         'initial_position_DGR': 0,
                         'initial_CW_slope': 254,
                         'initial_CCW_slope': 254,
-                        'initial_punch': 0}}
+                        'initial_punch': 0},
+                    11: {'name': 'XM430',
+                         'initial_position_DGR': 0},
+                    12: {'name': 'XM430',
+                         'initial_position_DGR': 0},
+                    13: {'name': 'AX18A',
+                         'initial_position_DGR': 0,
+                         'initial_CW_slope': 254,
+                         'initial_CCW_slope': 254,
+                         'initial_punch': 0},
+                    14: {'name': 'AX18A',
+                         'initial_position_DGR': -90,
+                         'initial_CW_slope': 90,
+                         'initial_CCW_slope': 90,
+                         'initial_punch': 100},
+                    15: {'name': 'AX18A',
+                         'initial_position_DGR': 0,
+                         'initial_CW_slope': 254,
+                         'initial_CCW_slope': 254,
+                         'initial_punch': 0},
+                    16: {'name': 'AX18A',
+                         'initial_position_DGR': 0,
+                         'initial_CW_slope': 254,
+                         'initial_CCW_slope': 254,
+                         'initial_punch': 0}}
 
 portHandler = PortHandler(DEVICE_NAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
@@ -169,10 +193,17 @@ def get_current_position(req):
                                     ADDRESS[ACTUATOR_SETTING[req.id]['name']]['PRESENT_POSITION'])
     print("Current Position(INT) of ID %s = %s" % (req.id, dxl_present_position))
     if ACTUATOR_SETTING[req.id]['name'] == 'AX18A':
+        if dxl_present_position < 0:
+            dxl_present_position = 0
+        if dxl_present_position > 1023:
+            dxl_present_position = 1023
         return (dxl_present_position - 511) / 1024 * 300 - ACTUATOR_SETTING[req.id]['initial_position_DGR']
     else:
+        if dxl_present_position < 0:
+            dxl_present_position = 0
+        if dxl_present_position > 4095:
+            dxl_present_position = 4095
         return (dxl_present_position - 2047) / 4096 * 360 - ACTUATOR_SETTING[req.id]['initial_position_DGR']
-
 
 
 def dynamixel_communicator():
