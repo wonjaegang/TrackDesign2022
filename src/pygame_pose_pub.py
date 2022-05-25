@@ -17,22 +17,21 @@ def main():
     msg = SetTrajectory()
 
     # Set the motors which user wants to control
-    control_motors = [1, 2, 3, 4, 5, 6]
+    control_motors = [3, 5, 13, 15, 6, 16]
 
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 return
-
         msg.id = 1
-        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 90
+        msg.position = -(pygame.mouse.get_pos()[0] - 250) / 250 * 90
         msg.velocity = 60
         if msg.id in control_motors:
             pub.publish(msg)
 
         msg.id = 2
-        msg.position = (pygame.mouse.get_pos()[0]) / 500 * 90
+        msg.position = -(pygame.mouse.get_pos()[0]) / 500 * 90
         msg.velocity = 60
         if msg.id in control_motors:
             pub.publish(msg)
@@ -56,6 +55,42 @@ def main():
             pub.publish(msg)
 
         msg.id = 6
+        msg.position = -(pygame.mouse.get_pos()[0] - 250) / 250 * 90
+        msg.velocity = 400
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 11
+        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 90
+        msg.velocity = 60
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 12
+        msg.position = (pygame.mouse.get_pos()[0]) / 500 * 90
+        msg.velocity = 60
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 13
+        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 150
+        msg.velocity = 400
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 14
+        msg.position = -(pygame.mouse.get_pos()[0] - 500) / 500 * 90
+        msg.velocity = 200
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 15
+        msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 150
+        msg.velocity = 400
+        if msg.id in control_motors:
+            pub.publish(msg)
+
+        msg.id = 16
         msg.position = (pygame.mouse.get_pos()[0] - 250) / 250 * 90
         msg.velocity = 400
         if msg.id in control_motors:
