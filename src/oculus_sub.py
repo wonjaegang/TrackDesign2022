@@ -24,21 +24,21 @@ class oculus_sub:
         self.head_pose = [ox, oy, oz, ow, px, py, pz ]
 
     def left_pose_callback(self, data): 
-        pz = data.pose.position.x + 0.3
-        px = data.pose.position.y + 0.2
-        py = data.pose.position.z - 1.1
-        oz = data.pose.orientation.x
-        ox = data.pose.orientation.y
-        oy = data.pose.orientation.z
+        px = data.pose.position.x - 0.3
+        py = data.pose.position.y - 0.2
+        pz = data.pose.position.z - 1.1
+        ox = data.pose.orientation.x
+        oy = data.pose.orientation.y
+        oz = data.pose.orientation.z
         ow = data.pose.orientation.w
-        self.left_pose = [ox, oy, oz, ow, px, py, pz ]
+        self.left_pose = [ox, oy, oz, ow, px, -py, pz ]
 
     def right_pose_callback(self, data): 
-        pz = data.pose.position.x - 0.3
-        px = data.pose.position.y + 0.2
-        py = data.pose.position.z - 1.1
-        oz = data.pose.orientation.x
-        ox = data.pose.orientation.y
-        oy = data.pose.orientation.z
+        px = data.pose.position.x - 0.3
+        py = data.pose.position.y + 0.2
+        pz = data.pose.position.z - 1.1
+        ox = data.pose.orientation.x
+        oy = data.pose.orientation.y
+        oz = data.pose.orientation.z
         ow = data.pose.orientation.w
-        self.right_pose = [ox, oy, oz, ow, px, py, pz ]
+        self.right_pose = [ox, oy, oz, ow, px, -py, pz ]
