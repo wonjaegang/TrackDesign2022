@@ -16,6 +16,7 @@ class TrajectoryCalculator:
         self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=10)
 
         # Motor state values
+        self.dxl_id_array = []
         self.goal_position = {}
         self.current_position = {}
         self.trajectory_msg = {}
@@ -27,46 +28,46 @@ class TrajectoryCalculator:
         def index2id(index):
             return (index % 6) + (index // 6) * 10 + 1
 
+        # Get DYNAMIXEL id
+        self.dxl_id_array = [index2id(i) for i in range(len(msg.data))]
+
         # Save subscribed goal position
-        self.goal_position = {index2id(i): rad2deg(data) for i, data in enumerate(msg.data)}
+        self.goal_position = {dxl_id: rad2deg(data) for dxl_id, data in zip(self.dxl_id_array, msg.data)}
 
         # Get current position from server at DYNAMIXEL communicator
-        self.current_position = {index2id(i):
-                                 self.current_position_client(index2id(i)).position for i in range(len(msg.data))}
+        self.current_position = {dxl_id: self.current_position_client(dxl_id).position for dxl_id in self.dxl_id_array}
 
         # Calculate Trajectory & Publish
-        for i in range(len(msg.data)):
-            dynamixel_id = index2id(i)
+        for dxl_id in self.dxl_id_array:
 
             # Calculate Trajectory
-            trajectory = self.calculate_trajectory(dynamixel_id)
+            trajectory = self.calculate_trajectory(dxl_id)
 
             # Publish message
-            self.trajectory_msg[dynamixel_id] = SetTrajectory()
-            self.trajectory_msg[dynamixel_id].id = dynamixel_id
-            self.trajectory_msg[dynamixel_id].position = trajectory['position']
-            self.trajectory_msg[dynamixel_id].velocity = trajectory['velocity']
-            self.trajectory_pub.publish(self.trajectory_msg[dynamixel_id])
+            self.trajectory_msg[dxl_id] = SetTrajectory()
+            self.trajectory_msg[dxl_id].id = dxl_id
+            self.trajectory_msg[dxl_id].position = trajectory['position']
+            self.trajectory_msg[dxl_id].velocity = trajectory['velocity']
+            self.trajectory_pub.publish(self.trajectory_msg[dxl_id])
 
         # Print data on terminal
         print("-" * 50)
-        for i in range(len(msg.data)):
-            dynamixel_id = index2id(i)
-            print("DYNAMIXEL ID %d data state:" % dynamixel_id)
-            print("    Goal Position(DGR):", round(self.goal_position[dynamixel_id], 4))
-            print("    Current Position(DGR):", round(self.current_position[dynamixel_id], 4))
-            print("    Published Position(DGR):", round(self.trajectory_msg[dynamixel_id].position, 4))
-            print("    Published Velocity(DPS):", round(self.trajectory_msg[dynamixel_id].velocity, 4))
+        for dxl_id in self.dxl_id_array:
+            print("DYNAMIXEL ID %d data state:" % dxl_id)
+            print("    Goal Position(DGR):", round(self.goal_position[dxl_id], 4))
+            print("    Current Position(DGR):", round(self.current_position[dxl_id], 4))
+            print("    Published Position(DGR):", round(self.trajectory_msg[dxl_id].position, 4))
+            print("    Published Velocity(DPS):", round(self.trajectory_msg[dxl_id].velocity, 4))
         print("-" * 50)
 
-    def calculate_trajectory(self, dynamixel_id):
+    def calculate_trajectory(self, dxl_id):
         # Should revise to P control
-        velocity_dict = {1: 60, 2: 60, 3: 400, 4: 200, 5: 400, 6: 400,
-                         11: 60, 12: 60, 13: 400, 14: 200, 15: 400, 16: 400,
-                         21: 400, 22: 400}
+        initial_velocity_dict = {1:  60,   2: 60,  3: 400,  4: 200,  5: 400,  6: 400,
+                                 11: 60,  12: 60, 13: 400, 14: 200, 15: 400, 16: 400,
+                                 21: 400, 22: 400}
 
-        position = self.goal_position[dynamixel_id]
-        velocity = velocity_dict[dynamixel_id]
+        position = self.goal_position[dxl_id]
+        velocity = initial_velocity_dict[dxl_id]
 
         return {'position': position, 'velocity': velocity}
 
