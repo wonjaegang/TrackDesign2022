@@ -201,7 +201,7 @@
   <parent link="link3_1"/>
   <child link="link4_1"/>
   <axis xyz="0.001482 -0.99999 0.004202"/>
-  <limit upper="2.181662" lower="0.0" effort="100" velocity="100"/>
+  <limit upper="0.872665" lower="-1.745329" effort="100" velocity="100"/>
 </joint>
 
 <joint name="joint5" type="revolute">
@@ -220,7 +220,7 @@
   <limit upper="1.570796" lower="-1.570796" effort="100" velocity="100"/>
 </joint>
 
-<joint name="point" type="revolute">
+<joint name="point" type="fixed">
   <origin xyz="0.035031 -0.020948 8.8e-05" rpy="0 0 0"/>
   <parent link="link6_1"/>
   <child link="point_1"/>

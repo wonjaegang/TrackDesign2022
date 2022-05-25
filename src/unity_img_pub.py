@@ -8,8 +8,7 @@ import numpy as np
 from sensor_msgs.msg import CompressedImage
 
 cap = cv2.VideoCapture(2)
-
-
+# cap.set(cv2.CAP_PROP_FPS, 60)
 #노드 선언
 rospy.init_node('img_pub', anonymous=True)
 image_raw = rospy.Publisher('image_raw/compressed',CompressedImage, queue_size=1)
@@ -20,7 +19,8 @@ rospy.sleep(1)
 while True:
     #이미지 가져오기
     success, img1 = cap.read()   
-    #
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
     img = cv2.resize(img1, dsize=(0,0), fx=0.7, fy=0.7)
     encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),90]
 
@@ -38,7 +38,7 @@ while True:
     #Display
     #cv2.imshow("Image", img1)
     cv2.imshow("converted", image_np)
-    cv2.waitKey(1)
+    if cv2.waitKey(1) > 0:
+        break
     #rospy.sleep(0.1)
-cap.release()
 cv2.destroyAllWindows()

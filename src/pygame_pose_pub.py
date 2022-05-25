@@ -17,7 +17,7 @@ def main():
     msg = SetTrajectory()
 
     # Set the motors which user wants to control
-    control_motors = [3, 5, 13, 15, 6, 16]
+    control_motors = [2,12]
 
     while True:
         for event in pygame.event.get():
