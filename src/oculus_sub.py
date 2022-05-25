@@ -17,9 +17,9 @@ class oculus_sub:
         pz = data.pose.position.x
         px = data.pose.position.y
         py = data.pose.position.z
-        oz = data.pose.orientation.x
-        ox = data.pose.orientation.y
-        oy = data.pose.orientation.z
+        ox = data.pose.orientation.x
+        oy = data.pose.orientation.y
+        oz = data.pose.orientation.z
         ow = data.pose.orientation.w
         self.head_pose = [ox, oy, oz, ow, px, py, pz ]
 

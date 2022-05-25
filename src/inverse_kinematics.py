@@ -22,9 +22,6 @@ def head_control(head_position):
 
     return head_euler
 
-
-
-
 def ik(target_l, target_r, initial_l, initial_r):
 
     inverse_l = chain.Chain.from_urdf_file("src/TrackDesign2022/urdf/Meta_arm_L.xacro")
@@ -52,12 +49,12 @@ def ik(target_l, target_r, initial_l, initial_r):
     ik_angle_r = inverse_r.inverse_kinematics_frame(trans(target_r),initial_position = initial_r)
     print("Right angle : ", ik_angle_r[1:7])
 
-    
+    '''
     fig, ax = plot.init_3d_figure()
     inverse_l.plot(ik_angle_l, ax, target_l[4:7])
     inverse_r.plot(ik_angle_r, ax, target_r[4:7])
     plot.show_figure()
-    
+    '''
     return ik_angle_l, ik_angle_r
 
 
@@ -78,7 +75,7 @@ def main():
         #head_goal = head_control([0, -0.451, 0.544, 0.707, 0.0, -0.5, -0.2])
         ik_goal_l, ik_goal_r = ik(oculus.left_pose, oculus.right_pose, initial_l,initial_r)
         head_goal = head_control(oculus.head_pose)
-        goal.data = np.concatenate ([ik_goal_r[1:7] ,ik_goal_l[1:7], head_goal[:2]])
+        goal.data = np.concatenate ([ik_goal_r[1:7] ,ik_goal_l[1:7], [head_goal[2]],[head_goal[1]]])
         #initial_l = ik_goal_l
         #initial_r = ik_goal_r
         goal_position_pub.publish(goal)
