@@ -18,41 +18,52 @@ class TrajectoryCalculator:
         # Motor state values
         self.goal_position = {}
         self.current_position = {}
-        self.trajectory_msg = {i: SetTrajectory() for i in range(1, 7)}
+        self.trajectory_msg = {}
 
     def goal_position_callback(self, msg):
         def rad2deg(radian):
             return radian / math.pi * 180
 
+        def index2id(index):
+            return (index % 6) + (index // 6) * 10 + 1
+
         # Save subscribed goal position
-        self.goal_position = {i: rad2deg(msg.data[i - 1]) for i in range(1, 7)}
+        self.goal_position = {index2id(i): rad2deg(data) for i, data in enumerate(msg.data)}
 
         # Get current position from server at DYNAMIXEL communicator
-        self.current_position = {i: self.current_position_client(i).position for i in range(1, 7)}
+        self.current_position = {index2id(i):
+                                 self.current_position_client(index2id(i)).position for i in range(len(msg.data))}
 
         # Calculate Trajectory & Publish
-        for i in range(1, 7):
+        for i in range(len(msg.data)):
+            dynamixel_id = index2id(i)
+
             # Calculate Trajectory
-            trajectory = self.calculate_trajectory(i)
+            trajectory = self.calculate_trajectory(dynamixel_id)
 
             # Publish message
-            self.trajectory_msg[i].id = i
-            self.trajectory_msg[i].position = trajectory['position']
-            self.trajectory_msg[i].velocity = trajectory['velocity']
-            self.trajectory_pub.publish(self.trajectory_msg[i])
+            self.trajectory_msg[dynamixel_id] = SetTrajectory()
+            self.trajectory_msg[dynamixel_id].id = dynamixel_id
+            self.trajectory_msg[dynamixel_id].position = trajectory['position']
+            self.trajectory_msg[dynamixel_id].velocity = trajectory['velocity']
+            self.trajectory_pub.publish(self.trajectory_msg[dynamixel_id])
 
         # Print data on terminal
         print("-" * 50)
-        for i in range(1, 7):
-            print("DYNAMIXEL ID %d data state:" % i)
-            print("    Goal Position(DGR):", round(self.goal_position[i], 4))
-            print("    Current Position(DGR):", round(self.current_position[i], 4))
-            print("    Published Position(DGR):", round(self.trajectory_msg[i].position, 4))
-            print("    Published Velocity(DPS):", round(self.trajectory_msg[i].velocity, 4))
+        for i in range(len(msg.data)):
+            dynamixel_id = index2id(i)
+            print("DYNAMIXEL ID %d data state:" % dynamixel_id)
+            print("    Goal Position(DGR):", round(self.goal_position[dynamixel_id], 4))
+            print("    Current Position(DGR):", round(self.current_position[dynamixel_id], 4))
+            print("    Published Position(DGR):", round(self.trajectory_msg[dynamixel_id].position, 4))
+            print("    Published Velocity(DPS):", round(self.trajectory_msg[dynamixel_id].velocity, 4))
         print("-" * 50)
 
     def calculate_trajectory(self, dynamixel_id):
-        velocity_dict = {1: 60, 2: 60, 3: 400, 4: 200, 5: 400, 6: 400}
+        # Should revise to P control
+        velocity_dict = {1: 60, 2: 60, 3: 400, 4: 200, 5: 400, 6: 400,
+                         11: 60, 12: 60, 13: 400, 14: 200, 15: 400, 16: 400,
+                         21: 400, 22: 400}
 
         position = self.goal_position[dynamixel_id]
         velocity = velocity_dict[dynamixel_id]

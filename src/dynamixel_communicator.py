@@ -70,7 +70,18 @@ ACTUATOR_SETTING = {1: {'name': 'XM430',
                          'initial_position_DGR': 0,
                          'initial_CW_slope': 254,
                          'initial_CCW_slope': 254,
-                         'initial_punch': 0}}
+                         'initial_punch': 0},
+                    21: {'name': 'AX18A',
+                         'initial_position_DGR': 0,
+                         'initial_CW_slope': 254,
+                         'initial_CCW_slope': 254,
+                         'initial_punch': 0},
+                    22: {'name': 'AX18A',
+                         'initial_position_DGR': 0,
+                         'initial_CW_slope': 254,
+                         'initial_CCW_slope': 254,
+                         'initial_punch': 0}
+                    }
 
 portHandler = PortHandler(DEVICE_NAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
@@ -109,7 +120,7 @@ def set_initial_value(dynamixel_id):
                                      dynamixel_id,
                                      ADDRESS[ACTUATOR_SETTING[dynamixel_id]['name']]['PUNCH'],
                                      ACTUATOR_SETTING[dynamixel_id]['initial_punch'])
-        print("ID: %d Value initialized." % dynamixel_id)
+    print("ID: %d Value initialized." % dynamixel_id)
 
 
 def enable_torque(dynamixel_id):
