@@ -8,7 +8,7 @@ from TrackDesign2022.msg import *
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
 clock = pygame.time.Clock()
-rate = 50
+rate = 20
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     msg = SetTrajectory()
 
     # Set the motors which user wants to control
-    control_motors = [2,12]
+    control_motors = [1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 22]
 
     while True:
         for event in pygame.event.get():

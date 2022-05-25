@@ -218,8 +218,8 @@ def get_current_position(req):
 
 
 def dynamixel_communicator():
-    rospy.Subscriber('/set_position', SetPosition, set_position_callback, queue_size=10)
-    rospy.Subscriber('/set_trajectory', SetTrajectory, set_trajectory_callback, queue_size=10)
+    rospy.Subscriber('/set_position', SetPosition, set_position_callback, queue_size=14)
+    rospy.Subscriber('/set_trajectory', SetTrajectory, set_trajectory_callback, queue_size=14)
     rospy.Service('/get_current_position', GetPosition, get_current_position)
     rospy.spin()
 

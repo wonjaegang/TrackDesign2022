@@ -13,7 +13,7 @@ class TrajectoryCalculator:
         rospy.wait_for_service('/get_current_position')
         self.goal_position_sub = rospy.Subscriber('/goal_position', Float32MultiArray, self.goal_position_callback)
         self.current_position_client = rospy.ServiceProxy('/get_current_position', GetPosition)
-        self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=10)
+        self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=14)
 
         # Motor state values
         self.dxl_id_array = []
