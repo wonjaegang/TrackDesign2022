@@ -149,7 +149,8 @@ def set_position_callback(data):
 
 
 def set_trajectory_callback(data_array):
-    for data in data_array:
+    print("-" * 50)
+    for data in data_array.data:
         if ACTUATOR_SETTING[data.id]['name'] == 'AX18A':
             # Convert degree -> DYNAMIXEL integer(AX18A: 0 ~ 1023)
             def deg2dynamixel_int(deg):
@@ -197,7 +198,6 @@ def set_trajectory_callback(data_array):
                                     8,
                                     data_packet)
 
-
 def get_current_position(req):
     dxl_present_position, dxl_comm_result, dxl_error =\
         packetHandler.read4ByteTxRx(portHandler,
@@ -219,8 +219,8 @@ def get_current_position(req):
 
 
 def dynamixel_communicator():
-    rospy.Subscriber('/set_position', SetPosition, set_position_callback, queue_size=14)
-    rospy.Subscriber('/set_trajectory', SetTrajectoryArray, set_trajectory_callback, queue_size=14)
+    rospy.Subscriber('/set_position', SetPosition, set_position_callback, queue_size=1)
+    rospy.Subscriber('/set_trajectory', SetTrajectoryArray, set_trajectory_callback, queue_size=1)
     rospy.Service('/get_current_position', GetPosition, get_current_position)
     rospy.spin()
 

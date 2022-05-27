@@ -57,7 +57,7 @@ def ik(target_l, target_r, initial_l, initial_r):
 
 def main():
     rospy.init_node('inverse_kinematics')
-    goal_position_pub = rospy.Publisher('/goal_position', Float32MultiArray, queue_size=10)
+    goal_position_pub = rospy.Publisher('/goal_position', Float32MultiArray, queue_size=1)
     goal = Float32MultiArray()
     oculus = oculus_sub()
     initial_l = [0, 0, 0, 0.0001, 0.0001, 0.0001, 0.0001, 0]

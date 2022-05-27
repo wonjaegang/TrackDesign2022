@@ -13,7 +13,7 @@ class TrajectoryCalculator:
         rospy.wait_for_service('/get_current_position')
         self.goal_position_sub = rospy.Subscriber('/goal_position', Float32MultiArray, self.goal_position_callback)
         self.current_position_client = rospy.ServiceProxy('/get_current_position', GetPosition)
-        self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectoryArray, queue_size=14)
+        self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectoryArray, queue_size=1)
 
         # Motor state values
         self.dxl_id_array = []
@@ -62,7 +62,6 @@ class TrajectoryCalculator:
             print("    Current Position(DGR):", round(self.current_position[dxl_id], 4))
             print("    Published Position(DGR):", round(self.trajectory_array[dxl_id].position, 4))
             print("    Published Velocity(DPS):", round(self.trajectory_array[dxl_id].velocity, 4))
-        print("-" * 50)
 
     def calculate_trajectory(self, dxl_id):
         # Should revise to P control
