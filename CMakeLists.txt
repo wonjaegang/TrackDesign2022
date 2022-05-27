@@ -53,16 +53,13 @@ add_message_files(
   FILES
     SetPosition.msg
     SetTrajectory.msg
-    SyncSetPosition.msg
-    BulkSetItem.msg
+    SetTrajectoryArray.msg
 )
 
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
     GetPosition.srv
-    SyncGetPosition.srv
-    BulkGetItem.srv
 )
 
 ## Generate actions in the 'action' folder
