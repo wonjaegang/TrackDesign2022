@@ -13,13 +13,13 @@ class TrajectoryCalculator:
         rospy.wait_for_service('/get_current_position')
         self.goal_position_sub = rospy.Subscriber('/goal_position', Float32MultiArray, self.goal_position_callback)
         self.current_position_client = rospy.ServiceProxy('/get_current_position', GetPosition)
-        self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectory, queue_size=14)
+        self.trajectory_pub = rospy.Publisher('/set_trajectory', SetTrajectoryArray, queue_size=14)
 
         # Motor state values
         self.dxl_id_array = []
         self.goal_position = {}
         self.current_position = {}
-        self.trajectory_msg = {}
+        self.trajectory_array = {}
 
     def goal_position_callback(self, msg):
         def rad2deg(radian):
@@ -43,12 +43,16 @@ class TrajectoryCalculator:
             # Calculate Trajectory
             trajectory = self.calculate_trajectory(dxl_id)
 
-            # Publish message
-            self.trajectory_msg[dxl_id] = SetTrajectory()
-            self.trajectory_msg[dxl_id].id = dxl_id
-            self.trajectory_msg[dxl_id].position = trajectory['position']
-            self.trajectory_msg[dxl_id].velocity = trajectory['velocity']
-            self.trajectory_pub.publish(self.trajectory_msg[dxl_id])
+            # Struct message
+            self.trajectory_array[dxl_id] = SetTrajectory()
+            self.trajectory_array[dxl_id].id = dxl_id
+            self.trajectory_array[dxl_id].position = trajectory['position']
+            self.trajectory_array[dxl_id].velocity = trajectory['velocity']
+
+        # Publish message
+        trajectory_msg = SetTrajectoryArray()
+        trajectory_msg.data = list(self.trajectory_array.values())
+        self.trajectory_pub.publish(trajectory_msg)
 
         # Print data on terminal
         print("-" * 50)
@@ -56,8 +60,8 @@ class TrajectoryCalculator:
             print("DYNAMIXEL ID %d data state:" % dxl_id)
             print("    Goal Position(DGR):", round(self.goal_position[dxl_id], 4))
             print("    Current Position(DGR):", round(self.current_position[dxl_id], 4))
-            print("    Published Position(DGR):", round(self.trajectory_msg[dxl_id].position, 4))
-            print("    Published Velocity(DPS):", round(self.trajectory_msg[dxl_id].velocity, 4))
+            print("    Published Position(DGR):", round(self.trajectory_array[dxl_id].position, 4))
+            print("    Published Velocity(DPS):", round(self.trajectory_array[dxl_id].velocity, 4))
         print("-" * 50)
 
     def calculate_trajectory(self, dxl_id):

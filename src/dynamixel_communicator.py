@@ -148,53 +148,54 @@ def set_position_callback(data):
                                  data.position)
 
 
-def set_trajectory_callback(data):
-    if ACTUATOR_SETTING[data.id]['name'] == 'AX18A':
-        # Convert degree -> DYNAMIXEL integer(AX18A: 0 ~ 1023)
-        def deg2dynamixel_int(deg):
-            return int(deg / 300 * 1024 + 0.5) + 511
+def set_trajectory_callback(data_array):
+    for data in data_array:
+        if ACTUATOR_SETTING[data.id]['name'] == 'AX18A':
+            # Convert degree -> DYNAMIXEL integer(AX18A: 0 ~ 1023)
+            def deg2dynamixel_int(deg):
+                return int(deg / 300 * 1024 + 0.5) + 511
 
-        def dps2dynamixel_int(dps):
-            return int(dps / 6 / 0.111 + 0.5)
+            def dps2dynamixel_int(dps):
+                return int(dps / 6 / 0.111 + 0.5)
 
-        position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
-        velocity_int = dps2dynamixel_int(data.velocity)
-        print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
-        data_packet = [DXL_LOBYTE(DXL_LOWORD(position_int)),
-                       DXL_HIBYTE(DXL_LOWORD(position_int)),
-                       DXL_LOBYTE(DXL_LOWORD(velocity_int)),
-                       DXL_HIBYTE(DXL_LOWORD(velocity_int))]
+            position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
+            velocity_int = dps2dynamixel_int(data.velocity)
+            print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+            data_packet = [DXL_LOBYTE(DXL_LOWORD(position_int)),
+                           DXL_HIBYTE(DXL_LOWORD(position_int)),
+                           DXL_LOBYTE(DXL_LOWORD(velocity_int)),
+                           DXL_HIBYTE(DXL_LOWORD(velocity_int))]
 
-        packetHandler.writeTxRx(portHandler,
-                                data.id,
-                                ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
-                                4,
-                                data_packet)
+            packetHandler.writeTxRx(portHandler,
+                                    data.id,
+                                    ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
+                                    4,
+                                    data_packet)
 
-    if ACTUATOR_SETTING[data.id]['name'] == 'XM430':
-        # Convert degree -> DYNAMIXEL integer(XM430: 0 ~ 4095)
-        def deg2dynamixel_int(deg):
-            return int(deg / 360 * 4096 + 0.5) + 2047
+        if ACTUATOR_SETTING[data.id]['name'] == 'XM430':
+            # Convert degree -> DYNAMIXEL integer(XM430: 0 ~ 4095)
+            def deg2dynamixel_int(deg):
+                return int(deg / 360 * 4096 + 0.5) + 2047
 
-        def dps2dynamixel_int(dps):
-            return int(dps / 6 / 0.229 + 0.5)
+            def dps2dynamixel_int(dps):
+                return int(dps / 6 / 0.229 + 0.5)
 
-        position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
-        velocity_int = dps2dynamixel_int(data.velocity)
-        print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
-        data_packet = [DXL_LOBYTE(DXL_LOWORD(velocity_int)),
-                       DXL_HIBYTE(DXL_LOWORD(velocity_int)),
-                       DXL_LOBYTE(DXL_HIWORD(velocity_int)),
-                       DXL_HIBYTE(DXL_HIWORD(velocity_int)),
-                       DXL_LOBYTE(DXL_LOWORD(position_int)),
-                       DXL_HIBYTE(DXL_LOWORD(position_int)),
-                       DXL_LOBYTE(DXL_HIWORD(position_int)),
-                       DXL_HIBYTE(DXL_HIWORD(position_int))]
-        packetHandler.writeTxRx(portHandler,
-                                data.id,
-                                ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
-                                8,
-                                data_packet)
+            position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
+            velocity_int = dps2dynamixel_int(data.velocity)
+            print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+            data_packet = [DXL_LOBYTE(DXL_LOWORD(velocity_int)),
+                           DXL_HIBYTE(DXL_LOWORD(velocity_int)),
+                           DXL_LOBYTE(DXL_HIWORD(velocity_int)),
+                           DXL_HIBYTE(DXL_HIWORD(velocity_int)),
+                           DXL_LOBYTE(DXL_LOWORD(position_int)),
+                           DXL_HIBYTE(DXL_LOWORD(position_int)),
+                           DXL_LOBYTE(DXL_HIWORD(position_int)),
+                           DXL_HIBYTE(DXL_HIWORD(position_int))]
+            packetHandler.writeTxRx(portHandler,
+                                    data.id,
+                                    ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
+                                    8,
+                                    data_packet)
 
 
 def get_current_position(req):
@@ -219,7 +220,7 @@ def get_current_position(req):
 
 def dynamixel_communicator():
     rospy.Subscriber('/set_position', SetPosition, set_position_callback, queue_size=14)
-    rospy.Subscriber('/set_trajectory', SetTrajectory, set_trajectory_callback, queue_size=14)
+    rospy.Subscriber('/set_trajectory', SetTrajectoryArray, set_trajectory_callback, queue_size=14)
     rospy.Service('/get_current_position', GetPosition, get_current_position)
     rospy.spin()
 
