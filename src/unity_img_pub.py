@@ -7,7 +7,7 @@ import numpy as np
 
 from sensor_msgs.msg import CompressedImage
 
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(2, cv2.CAP_V4L)
 # cap.set(cv2.CAP_PROP_FPS, 60)
 #노드 선언
 rospy.init_node('img_pub', anonymous=True)
