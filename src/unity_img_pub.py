@@ -21,8 +21,8 @@ while True:
     success, img1 = cap.read()   
     fps = cap.get(cv2.CAP_PROP_FPS)
     print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
-    img = cv2.resize(img1, dsize=(0,0), fx=0.7, fy=0.7)
-    encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),90]
+    img = cv2.resize(img1, dsize=(0,0), fx=1.0, fy=0.7)
+    encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),60]
 
     #CompressedImage 메시지 작성
     imgdata.header.stamp = rospy.Time.now()

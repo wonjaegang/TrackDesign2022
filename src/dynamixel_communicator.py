@@ -149,7 +149,7 @@ def set_position_callback(data):
 
 
 def set_trajectory_callback(data_array):
-    print("-" * 50)
+    #print("-" * 50)
     for data in data_array.data:
         if ACTUATOR_SETTING[data.id]['name'] == 'AX18A':
             # Convert degree -> DYNAMIXEL integer(AX18A: 0 ~ 1023)
@@ -161,7 +161,7 @@ def set_trajectory_callback(data_array):
 
             position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
             velocity_int = dps2dynamixel_int(data.velocity)
-            print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+            #print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
             data_packet = [DXL_LOBYTE(DXL_LOWORD(position_int)),
                            DXL_HIBYTE(DXL_LOWORD(position_int)),
                            DXL_LOBYTE(DXL_LOWORD(velocity_int)),
@@ -183,7 +183,7 @@ def set_trajectory_callback(data_array):
 
             position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
             velocity_int = dps2dynamixel_int(data.velocity)
-            print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+            #print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
             data_packet = [DXL_LOBYTE(DXL_LOWORD(velocity_int)),
                            DXL_HIBYTE(DXL_LOWORD(velocity_int)),
                            DXL_LOBYTE(DXL_HIWORD(velocity_int)),

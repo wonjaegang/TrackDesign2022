@@ -3,6 +3,7 @@
 
 import rospy
 from geometry_msgs.msg import PoseStamped
+
 class oculus_sub:
 
     def __init__(self):
@@ -24,21 +25,21 @@ class oculus_sub:
         self.head_pose = [ox, oy, oz, ow, px, py, pz ]
 
     def left_pose_callback(self, data): 
-        px = data.pose.position.x - 0.3
-        pz = data.pose.position.y - 0.2
+        pz = data.pose.position.x - 0.3
+        px = data.pose.position.y - 0.2
         py = data.pose.position.z - 1.1
-        ox = data.pose.orientation.x
-        oz = data.pose.orientation.y
+        oz = data.pose.orientation.x
+        ox = data.pose.orientation.y
         oy = data.pose.orientation.z
         ow = data.pose.orientation.w
-        self.left_pose = [ox, oy, oz, ow, px, -py, pz ]
+        self.left_pose = [ox, oy, oz, ow, px, py, pz ]
 
     def right_pose_callback(self, data): 
-        px = data.pose.position.x - 0.3
-        pz = data.pose.position.y + 0.2
+        pz = data.pose.position.x - 0.3
+        px = data.pose.position.y + 0.2
         py = data.pose.position.z - 1.1
-        ox = data.pose.orientation.x
-        oz = data.pose.orientation.y
+        oz = data.pose.orientation.x
+        ox = data.pose.orientation.y
         oy = data.pose.orientation.z
         ow = data.pose.orientation.w
         self.right_pose = [ox, oy, oz, ow, px, py, pz ]

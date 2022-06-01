@@ -35,7 +35,7 @@ class TrajectoryCalculator:
         self.goal_position = {dxl_id: rad2deg(data) for dxl_id, data in zip(self.dxl_id_array, msg.data)}
 
         # Get current position from server at DYNAMIXEL communicator
-        self.current_position = {dxl_id: self.current_position_client(dxl_id).position for dxl_id in self.dxl_id_array}
+        # self.current_position = {dxl_id: self.current_position_client(dxl_id).position for dxl_id in self.dxl_id_array}
 
         # Calculate Trajectory & Publish
         for dxl_id in self.dxl_id_array:
@@ -55,13 +55,13 @@ class TrajectoryCalculator:
         self.trajectory_pub.publish(trajectory_msg)
 
         # Print data on terminal
-        print("-" * 50)
-        for dxl_id in self.dxl_id_array:
-            print("DYNAMIXEL ID %d data state:" % dxl_id)
-            print("    Goal Position(DGR):", round(self.goal_position[dxl_id], 4))
-            print("    Current Position(DGR):", round(self.current_position[dxl_id], 4))
-            print("    Published Position(DGR):", round(self.trajectory_array[dxl_id].position, 4))
-            print("    Published Velocity(DPS):", round(self.trajectory_array[dxl_id].velocity, 4))
+        # print("-" * 50)
+        # for dxl_id in self.dxl_id_array:
+            # print("DYNAMIXEL ID %d data state:" % dxl_id)
+            # print("    Goal Position(DGR):", round(self.goal_position[dxl_id], 4))
+            # print("    Current Position(DGR):", round(self.current_position[dxl_id], 4))
+            # print("    Published Position(DGR):", round(self.trajectory_array[dxl_id].position, 4))
+            # print("    Published Velocity(DPS):", round(self.trajectory_array[dxl_id].velocity, 4))
 
     def calculate_trajectory(self, dxl_id):
         # Should revise to P control
