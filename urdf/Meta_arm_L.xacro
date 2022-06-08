@@ -176,7 +176,7 @@
   <origin xyz="-0.027421 0.319595 -0.331345" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="link1_1"/>
-  <axis xyz="0.999998 -0.001756 3e-06"/>
+  <axis xyz="1.0 0.0 0.0"/>
   <limit upper="1.570796" lower="-1.570796" effort="100" velocity="100"/>
 </joint>
 
@@ -184,7 +184,7 @@
   <origin xyz="0.027415 -0.048514 0.020085" rpy="0 0 0"/>
   <parent link="link1_1"/>
   <child link="link2_1"/>
-  <axis xyz="-0.0 0.001735 0.999998"/>
+  <axis xyz="0.0 0.0 1.0"/>
   <limit upper="1.570796" lower="0.0" effort="100" velocity="100"/>
 </joint>
 
@@ -192,7 +192,7 @@
   <origin xyz="-0.000186 -0.106033 -0.019017" rpy="0 0 0"/>
   <parent link="link2_1"/>
   <child link="link3_1"/>
-  <axis xyz="0.001756 0.999997 -0.001735"/>
+  <axis xyz="0.0 -1.0 -0.0"/>
   <limit upper="2.617994" lower="-2.617994" effort="100" velocity="100"/>
 </joint>
 
@@ -200,7 +200,7 @@
   <origin xyz="0.020699 -0.165662 0.000398" rpy="0 0 0"/>
   <parent link="link3_1"/>
   <child link="link4_1"/>
-  <axis xyz="0.999979 -0.001745 0.006169"/>
+  <axis xyz="1.0 0.0 0.0"/>
   <limit upper="1.570796" lower="-0.610866" effort="100" velocity="100"/>
 </joint>
 
@@ -208,7 +208,7 @@
   <origin xyz="-0.021653 0.000222 0.105868" rpy="0 0 0"/>
   <parent link="link4_1"/>
   <child link="link5_1"/>
-  <axis xyz="0.006166 -0.001745 -0.999979"/>
+  <axis xyz="0.0 0.0 1.0"/>
   <limit upper="2.617994" lower="-2.617994" effort="100" velocity="100"/>
 </joint>
 
@@ -216,15 +216,15 @@
   <origin xyz="-0.022165 0.000366 0.188867" rpy="0 0 0"/>
   <parent link="link5_1"/>
   <child link="link6_1"/>
-  <axis xyz="-0.999979 0.001745 -0.006169"/>
+  <axis xyz="-1.0 0.0 0.0"/>
   <limit upper="1.570796" lower="-1.570796" effort="100" velocity="100"/>
 </joint>
 
-<joint name="point" type="fixed">
+<joint name="point" type="revolute">
   <origin xyz="0.020784 2.5e-05 0.035128" rpy="0 0 0"/>
   <parent link="link6_1"/>
   <child link="point_1"/>
-  <axis xyz="-0.006166 0.001745 0.999979"/>
+  <axis xyz="0.0 0.0 0.0"/>
   <limit upper="0.000045" lower="0.0" effort="100" velocity="100"/>
 </joint>
 

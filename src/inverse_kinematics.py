@@ -26,7 +26,7 @@ def ik(target_l, target_r, initial_l, initial_r):
     inverse_l.active_links_mask[0] = False
     inverse_l.active_links_mask[7] = False
 
-    inverse_r = chain.Chain.from_urdf_file("src/TrackDesign2022/urdf/meta_arm.xacro")
+    inverse_r = chain.Chain.from_urdf_file("src/TrackDesign2022/urdf/Meta_arm_R.xacro")
     inverse_r.active_links_mask[0] = False
     inverse_r.active_links_mask[7] = False
 

@@ -26,7 +26,7 @@ class oculus_sub:
 
     def left_pose_callback(self, data): 
         pz = data.pose.position.x - 0.3
-        px = data.pose.position.y - 0.2
+        px = data.pose.position.y - 0.3
         py = data.pose.position.z - 1.1
         oz = data.pose.orientation.x
         ox = data.pose.orientation.y
@@ -36,7 +36,7 @@ class oculus_sub:
 
     def right_pose_callback(self, data): 
         pz = data.pose.position.x - 0.3
-        px = data.pose.position.y + 0.2
+        px = data.pose.position.y + 0.3
         py = data.pose.position.z - 1.1
         oz = data.pose.orientation.x
         ox = data.pose.orientation.y
