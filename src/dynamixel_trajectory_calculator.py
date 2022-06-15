@@ -37,11 +37,23 @@ class TrajectoryCalculator:
         # Get current position from server at DYNAMIXEL communicator
         # self.current_position = {dxl_id: self.current_position_client(dxl_id).position for dxl_id in self.dxl_id_array}
 
+        #print(self.goal_position[1], self.goal_position[2], self.goal_position[11], self.goal_position[12])
+
         # Temp code
-        if self.goal_position[1] > 0 and self.goal_position[2] > self.goal_position[1]:
-            self.goal_position[2] = self.goal_position[1]
-        if self.goal_position[11] < 0 and self.goal_position[12] < self.goal_position[11]:
-            self.goal_position[12] = self.goal_position[11]
+        if self.goal_position[1] > 0:
+            if self.goal_position[2] > self.goal_position[1]:
+                self.goal_position[2] = self.goal_position[1]
+        else:
+            if self.goal_position[2] > 0:
+                self.goal_position[2] = 0
+
+        if self.goal_position[11] < -30:
+            if self.goal_position[12] < self.goal_position[11]:
+                self.goal_position[12] = self.goal_position[11]
+        else:
+            if self.goal_position[12] < 0:
+                self.goal_position[2] = 0
+            
         # Calculate Trajectory & Publish
         for dxl_id in self.dxl_id_array:
 

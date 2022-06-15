@@ -19,9 +19,10 @@ rospy.sleep(1)
 while True:
     #이미지 가져오기
     success, img1 = cap.read()   
+    img_1 = cv2.resize(img1, dsize=(1920,1080))
     fps = cap.get(cv2.CAP_PROP_FPS)
     print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
-    img = cv2.resize(img1, dsize=(0,0), fx=1.0, fy=0.7)
+    img = cv2.resize(img1, dsize=(640,360), fx=1.0, fy=0.7)
     encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),60]
 
     #CompressedImage 메시지 작성
@@ -37,8 +38,11 @@ while True:
 
     #Display
     #cv2.imshow("Image", img1)
-    cv2.imshow("converted", image_np)
+    cv2.imshow("User_View", img_1)
+    
     if cv2.waitKey(1) > 0:
-        break
+        # break
+        pass
     #rospy.sleep(0.1)
+    
 cv2.destroyAllWindows()
