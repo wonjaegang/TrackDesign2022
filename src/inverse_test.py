@@ -61,7 +61,7 @@ def main():
     inverse.active_links_mask[0] = False
     inverse.active_links_mask[7] = False
 '''
-    print('!!!!!!!', inverse)
+    #print("!!!!!!!", inverse)
 
     # 4X4 Transformation matrix
     quat = R.from_quat(target[0:4])

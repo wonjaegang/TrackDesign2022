@@ -26,10 +26,12 @@ class TrajectoryCalculator:
             return radian / math.pi * 180
 
         def index2id(index):
-            return (index % 6) + (index // 6) * 10 + 1
+            # return (index % 6) + (index // 6) * 10 + 1
+            return index + 1
 
         # Get DYNAMIXEL id
-        self.dxl_id_array = [index2id(i) for i in range(len(msg.data))]
+        # self.dxl_id_array = [index2id(i) for i in range(len(msg.data))]
+        self.dxl_id_array = [index2id(i) for i in range(len(msg.data))][:7]
 
         # Save subscribed goal position
         self.goal_position = {dxl_id: rad2deg(data) for dxl_id, data in zip(self.dxl_id_array, msg.data)}
@@ -39,20 +41,20 @@ class TrajectoryCalculator:
 
         #print(self.goal_position[1], self.goal_position[2], self.goal_position[11], self.goal_position[12])
 
-        # Temp code
-        if self.goal_position[1] > 0:
-            if self.goal_position[2] > self.goal_position[1]:
-                self.goal_position[2] = self.goal_position[1]
-        else:
-            if self.goal_position[2] > 0:
-                self.goal_position[2] = 0
+        # # Temp code
+        # if self.goal_position[1] > 0:
+        #     if self.goal_position[2] > self.goal_position[1]:
+        #         self.goal_position[2] = self.goal_position[1]
+        # else:
+        #     if self.goal_position[2] > 0:
+        #         self.goal_position[2] = 0
 
-        if self.goal_position[11] < -30:
-            if self.goal_position[12] < self.goal_position[11]:
-                self.goal_position[12] = self.goal_position[11]
-        else:
-            if self.goal_position[12] < 0:
-                self.goal_position[2] = 0
+        # if self.goal_position[11] < -30:
+        #     if self.goal_position[12] < self.goal_position[11]:
+        #         self.goal_position[12] = self.goal_position[11]
+        # else:
+        #     if self.goal_position[12] < 0:
+        #         self.goal_position[2] = 0
             
         # Calculate Trajectory & Publish
         for dxl_id in self.dxl_id_array:
@@ -82,9 +84,7 @@ class TrajectoryCalculator:
 
     def calculate_trajectory(self, dxl_id):
         # Should revise to P control
-        initial_velocity_dict = {1:  60,   2: 60,  3: 400,  4: 200,  5: 400,  6: 400,
-                                 11: 60,  12: 60, 13: 400, 14: 200, 15: 400, 16: 400,
-                                 21: 400, 22: 400}
+        initial_velocity_dict = {1:  60,   2: 60,  3: 60,  4: 60,  5: 60,  6: 60, 7: 0}
 
         position = self.goal_position[dxl_id]
         velocity = initial_velocity_dict[dxl_id]

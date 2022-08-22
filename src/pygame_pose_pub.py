@@ -18,7 +18,7 @@ def main():
     msg = SetTrajectory()
 
     # Set the motors which user wants to control
-    control_motors = [1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16]
+    control_motors = [2]
 
     while True:
         for event in pygame.event.get():
@@ -35,7 +35,7 @@ def main():
             data_array.append(copy.deepcopy(msg))
 
         msg.id = 2
-        msg.position = -(pygame.mouse.get_pos()[0]) / 500 * 90
+        msg.position = -(pygame.mouse.get_pos()[0] - 250) / 250 * 90
         msg.velocity = 60
         if msg.id in control_motors:
             data_array.append(copy.deepcopy(msg))
