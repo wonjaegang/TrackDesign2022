@@ -56,6 +56,12 @@ def ik(target_l, target_r, initial_l, initial_r):
     return ik_angle_l, ik_angle_r
 
 
+def gripper(joy_y):
+    joy_min = -512
+    joy_max = 512
+    return (joy_y - joy_min) / (joy_max - joy_min) * np.pi / 2
+
+
 def main():
     rospy.init_node('inverse_kinematics')
     goal_position_pub = rospy.Publisher('/goal_position', Float32MultiArray, queue_size=1)
@@ -71,7 +77,11 @@ def main():
         #head_goal = head_control([0, -0.451, 0.544, 0.707, 0.0, -0.5, -0.2])
         ik_goal_l, ik_goal_r = ik(oculus.left_pose, oculus.right_pose, initial_l, initial_r)
         head_goal = head_control(oculus.head_pose)
-        goal.data = np.concatenate([ik_goal_r[1:7], ik_goal_l[1:7], head_goal[:0:-1]])
+        goal.data = np.concatenate([ik_goal_r[1:7],
+                                    gripper(oculus.right_joy[1]),
+                                    ik_goal_l[1:7],
+                                    gripper(oculus.left_joy[1]),
+                                    head_goal[:0:-1]])
         initial_l = ik_goal_l
         initial_r = ik_goal_r
         goal_position_pub.publish(goal)

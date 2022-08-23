@@ -11,7 +11,10 @@ class oculus_sub:
         # subscriber (LiDAR, Odometry)
         self.head_pose_sub = rospy.Subscriber('/oculus/head_set/pose',PoseStamped,self.head_pose_callback,queue_size=1)
         self.left_pose_sub = rospy.Subscriber('/oculus/lpoint', PoseStamped,self.left_pose_callback,queue_size=1)
-        self.right_pose_sub = rospy.Subscriber('/oculus/rpoint', PoseStamped,self.right_pose_callback,queue_size=1) 
+        self.right_pose_sub = rospy.Subscriber('/oculus/rpoint', PoseStamped,self.right_pose_callback,queue_size=1)
+
+        self.right_joy_sub = rospy.Subscriber('/oculus/rjoy', PoseStamped, self.right_joy_callback, queue_size=1)
+        self.left_joy_sub = rospy.Subscriber('/oculus/ljoy', PoseStamped, self.left_joy_callback, queue_size=1)
         
     # callback
     def head_pose_callback(self, data):        
@@ -36,7 +39,7 @@ class oculus_sub:
         self.left_pose = [ox, oy, oz, ow, px, py, pz ]
         #self.left_pose = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-    def right_pose_callback(self, data): 
+    def right_pose_callback(self, data):
         pz = data.pose.position.x - 0.3
         px = data.pose.position.y + 0.3
         py = data.pose.position.z - 1.1
@@ -46,3 +49,10 @@ class oculus_sub:
         ow = data.pose.orientation.w
         self.right_pose = [ox, oy, oz, ow, px, py, pz ]
         #self.right_pose = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    # Temp method. Should check datatype of OQ2's joystick.
+    def right_joy_callback(self, data):
+        self.right_joy = [data.x, data.y]
+
+    def left_joy_callback(self, data):
+        self.left_joy = [data.x, data.y]
