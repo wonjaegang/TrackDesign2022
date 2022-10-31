@@ -31,7 +31,11 @@ class TrajectoryCalculator:
 
         # Get DYNAMIXEL id
         # self.dxl_id_array = [index2id(i) for i in range(len(msg.data))]
+<<<<<<< HEAD
         self.dxl_id_array = [index2id(i) for i in range(len(msg.data))]
+=======
+        self.dxl_id_array = [index2id(i) for i in range(len(msg.data))][:7]  # One Arm + Gripper. Should be changed
+>>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
 
         # Save subscribed goal position
         self.goal_position = {dxl_id: rad2deg(data) for dxl_id, data in zip(self.dxl_id_array, msg.data)}
@@ -87,9 +91,13 @@ class TrajectoryCalculator:
 
     def calculate_trajectory(self, dxl_id):
         # Should revise to P control
+<<<<<<< HEAD
         initial_velocity_dict = {1: 100,   2: 100,  3: 100,  4: 100,  5: 100,  6: 100, 7: 0,
                                  11: 100, 12: 100, 13: 100, 14: 100, 15: 100, 16: 100, 17: 0,
                                  21: 100, 22: 100}
+=======
+        initial_velocity_dict = {1: 100,   2: 100,  3: 100,  4: 100,  5: 100,  6: 100, 7: 60}  # One Arm + Gripper. Should be changed
+>>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
 
         position = self.goal_position[dxl_id]
         velocity = initial_velocity_dict[dxl_id]

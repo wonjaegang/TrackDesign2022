@@ -24,6 +24,7 @@ DEVICE_NAME = '/dev/ttyUSB0'        # Check which port is being used on your con
 
 # Actuator initial setting. Use ID as keys.
 ACTUATOR_SETTING = {
+<<<<<<< HEAD
                     # 1: {'name': 'XM430',
                     #     'initial_position_DGR': 90},
                     # 2: {'name': 'XM430',
@@ -54,15 +55,57 @@ ACTUATOR_SETTING = {
                     #      'initial_position_DGR': -90},
                     # 12: {'name': 'XM430',
                     #      'initial_position_DGR': 90},
+=======
+                    1: {'name': 'XM430',
+                        'initial_position_DGR': 0},
+                    2: {'name': 'XM430',
+                        'initial_position_DGR': 0},
+                    3: {'name': 'AX18A',
+                        'initial_position_DGR': 0,
+                        'initial_CW_slope': 254,
+                        'initial_CCW_slope': 254,
+                        'initial_punch': 0},
+                    4: {'name': 'XM430',
+                        'initial_position_DGR': 0},
+                    5: {'name': 'AX18A',
+                        'initial_position_DGR': 0,
+                        'initial_CW_slope': 254,
+                        'initial_CCW_slope': 254,
+                        'initial_punch': 0},
+                    6: {'name': 'AX18A',
+                        'initial_position_DGR': 0,
+                        'initial_CW_slope': 254,
+                        'initial_CCW_slope': 254,
+                        'initial_punch': 0},
+                    7: {'name': 'AX18A',
+                        'initial_position_DGR': 0,
+                        'initial_CW_slope': 254,
+                        'initial_CCW_slope': 254,
+                        'initial_punch': 0}
+                    # 11: {'name': 'XM430',
+                    #      'initial_position_DGR': 0},
+                    # 12: {'name': 'XM430',
+                    #      'initial_position_DGR': 0},
+>>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
                     # 13: {'name': 'AX18A',
                     #      'initial_position_DGR': 0,
                     #      'initial_CW_slope': 254,
                     #      'initial_CCW_slope': 254,
                     #      'initial_punch': 0},
+<<<<<<< HEAD
                     # 14: {'name': 'XM430',
                     #     'initial_position_DGR': -90},
                     # 15: {'name': 'AX18A',
                     #      'initial_position_DGR': 90,
+=======
+                    # 14: {'name': 'AX18A',
+                    #      'initial_position_DGR': -90,
+                    #      'initial_CW_slope': 90,
+                    #      'initial_CCW_slope': 90,
+                    #      'initial_punch': 100},
+                    # 15: {'name': 'AX18A',
+                    #      'initial_position_DGR': 0,
+>>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
                     #      'initial_CW_slope': 254,
                     #      'initial_CCW_slope': 254,
                     #      'initial_punch': 0},
@@ -71,6 +114,7 @@ ACTUATOR_SETTING = {
                     #      'initial_CW_slope': 254,
                     #      'initial_CCW_slope': 254,
                     #      'initial_punch': 0},
+<<<<<<< HEAD
                     # 17: {'name': 'AX18A',
                     #     'initial_position_DGR': 0,
                     #     'initial_CW_slope': 254,
@@ -86,6 +130,18 @@ ACTUATOR_SETTING = {
                          'initial_CW_slope': 254,
                          'initial_CCW_slope': 254,
                          'initial_punch': 0}
+=======
+                    # 21: {'name': 'AX18A',
+                    #      'initial_position_DGR': 0,
+                    #      'initial_CW_slope': 254,
+                    #      'initial_CCW_slope': 254,
+                    #      'initial_punch': 0},
+                    # 22: {'name': 'AX18A',
+                    #      'initial_position_DGR': 0,
+                    #      'initial_CW_slope': 254,
+                    #      'initial_CCW_slope': 254,
+                    #      'initial_punch': 0}
+>>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
                     }
 
 portHandler = PortHandler(DEVICE_NAME)
@@ -154,7 +210,7 @@ def set_position_callback(data):
 
 
 def set_trajectory_callback(data_array):
-    #print("-" * 50)
+    # print("-" * 50)
     for data in data_array.data:
         if ACTUATOR_SETTING[data.id]['name'] == 'AX18A':
             # Convert degree -> DYNAMIXEL integer(AX18A: 0 ~ 1023)
@@ -166,7 +222,7 @@ def set_trajectory_callback(data_array):
 
             position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
             velocity_int = dps2dynamixel_int(data.velocity)
-            #print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+            # print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
             data_packet = [DXL_LOBYTE(DXL_LOWORD(position_int)),
                            DXL_HIBYTE(DXL_LOWORD(position_int)),
                            DXL_LOBYTE(DXL_LOWORD(velocity_int)),
@@ -188,7 +244,7 @@ def set_trajectory_callback(data_array):
 
             position_int = deg2dynamixel_int(data.position + ACTUATOR_SETTING[data.id]['initial_position_DGR'])
             velocity_int = dps2dynamixel_int(data.velocity)
-            #print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
+            # print("ID %s - Goal Position(INT): %d, Velocity(INT): %s" % (data.id, position_int, velocity_int))
             data_packet = [DXL_LOBYTE(DXL_LOWORD(velocity_int)),
                            DXL_HIBYTE(DXL_LOWORD(velocity_int)),
                            DXL_LOBYTE(DXL_HIWORD(velocity_int)),
@@ -202,6 +258,7 @@ def set_trajectory_callback(data_array):
                                     ADDRESS[ACTUATOR_SETTING[data.id]['name']]['GOAL_POSITION'],
                                     8,
                                     data_packet)
+
 
 def get_current_position(req):
     dxl_present_position, dxl_comm_result, dxl_error =\
