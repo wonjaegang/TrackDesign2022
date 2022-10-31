@@ -19,9 +19,9 @@ rospy.sleep(1)
 while True:
     #이미지 가져오기
     success, img1 = cap.read()   
-    img_1 = cv2.resize(img1, dsize=(1920,1080))
+    img_1 = cv2.resize(img1, dsize=(960,540))
     fps = cap.get(cv2.CAP_PROP_FPS)
-    print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+    #print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
     img = cv2.resize(img1, dsize=(640,360), fx=1.0, fy=0.7)
     encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),60]
 
