@@ -13,7 +13,6 @@ class oculus_sub:
         self.head_pose_sub = rospy.Subscriber('/oculus/head_set/pose',PoseStamped,self.head_pose_callback,queue_size=1)
         self.left_pose_sub = rospy.Subscriber('/oculus/lpoint', PoseStamped,self.left_pose_callback,queue_size=1)
         self.right_pose_sub = rospy.Subscriber('/oculus/rpoint', PoseStamped,self.right_pose_callback,queue_size=1)
-<<<<<<< HEAD
         self.controller_sub = rospy.Subscriber('/oculus/controller', Joy,self.controller_callback,queue_size=1)  
         self.head_pose = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
         self.left_pose = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
@@ -22,11 +21,8 @@ class oculus_sub:
         self.rjoy_B = 0
         self.ljoy_X = 0
         self.ljoy_Y = 0
-=======
-
         self.right_joy_sub = rospy.Subscriber('/oculus/rjoy', PoseStamped, self.right_joy_callback, queue_size=1)
         self.left_joy_sub = rospy.Subscriber('/oculus/ljoy', PoseStamped, self.left_joy_callback, queue_size=1)
->>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
         
     # callback
     def head_pose_callback(self, data):        
@@ -54,14 +50,12 @@ class oculus_sub:
         ox = data.pose.orientation.y
         oy = data.pose.orientation.z
         ow = data.pose.orientation.w
-<<<<<<< HEAD
         self.left_pose = [ox, oy, oz, ow, 1.2*px, 1.2*py, 1.2*pz ]
 
     def right_pose_callback(self, data): 
         pz = data.pose.position.x - 0.25
         px = data.pose.position.y + 0.2
         py = data.pose.position.z - 1.3
-=======
         self.left_pose = [ox, oy, oz, ow, px, py, pz ]
         #self.left_pose = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -69,14 +63,11 @@ class oculus_sub:
         pz = data.pose.position.x - 0.3
         px = data.pose.position.y + 0.3
         py = data.pose.position.z - 1.1
->>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
         oz = data.pose.orientation.x
         ox = data.pose.orientation.y
         oy = data.pose.orientation.z
         ow = data.pose.orientation.w
-<<<<<<< HEAD
         self.right_pose = [ox, oy, oz, ow, 1.2*px, 1.2*py, 1.2*pz ]
-=======
         self.right_pose = [ox, oy, oz, ow, px, py, pz ]
         #self.right_pose = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -86,4 +77,3 @@ class oculus_sub:
 
     def left_joy_callback(self, data):
         self.left_joy = [data.x, data.y]
->>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35

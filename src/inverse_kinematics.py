@@ -26,12 +26,7 @@ def ik(target_l, target_r, initial_l, initial_r):
     inverse_l.active_links_mask[0] = False
     inverse_l.active_links_mask[7] = False
 
-<<<<<<< HEAD
     inverse_r = chain.Chain.from_urdf_file("src/TrackDesign2022/urdf/new_meta_R_V22.xacro")
-=======
-    inverse_r = chain.Chain.from_urdf_file("src/TrackDesign2022/urdf/new_meta.xacro")
-    #inverse_r = chain.Chain.from_urdf_file("src/TrackDesign2022/urdf/new_meta.xacro")
->>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
     inverse_r.active_links_mask[0] = False
     inverse_r.active_links_mask[7] = False
 
@@ -60,7 +55,6 @@ def ik(target_l, target_r, initial_l, initial_r):
     return ik_angle_l, ik_angle_r
 
 
-<<<<<<< HEAD
 def gripper(rjoy_A, rjoy_B, ljoy_X, ljoy_Y, gripper_right_pose, gripper_left_pose):
     rmax = np.pi / 6
     rmin = -np.pi / 2
@@ -89,13 +83,6 @@ def gripper(rjoy_A, rjoy_B, ljoy_X, ljoy_Y, gripper_right_pose, gripper_left_pos
     
     return gripper_right_pose, gripper_left_pose
         
-=======
-def gripper(joy_y):
-    joy_min = -512
-    joy_max = 512
-    return (joy_y - joy_min) / (joy_max - joy_min) * np.pi / 2
-
->>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
 
 def main():
     rospy.init_node('inverse_kinematics')
@@ -112,7 +99,6 @@ def main():
     #print("Inverse Kinematics start!!!!!")
 
     while not rospy.is_shutdown():
-<<<<<<< HEAD
         ik_goal_l, ik_goal_r = ik(oculus.left_pose, oculus.right_pose, initial_l, initial_r)
         head_goal = head_control(oculus.head_pose)
         gripper_r, gripper_l = gripper(oculus.rjoy_A, oculus.rjoy_B, oculus.ljoy_X, oculus.ljoy_Y, gripper_r, gripper_l)
@@ -120,16 +106,6 @@ def main():
                                     [gripper_r],
                                     ik_goal_l[1:7],
                                     [gripper_l],
-=======
-        #ik_goal_l, ik_goal_r = ik([0, 0, 0, 0.0001, -0.2, 0.9, 0.5],[0.108, -0.173, -0.705, 0.679, -0.2, -0.9, 0.5], initial_l,initial_r)
-        #head_goal = head_control([0, -0.451, 0.544, 0.707, 0.0, -0.5, -0.2])
-        ik_goal_l, ik_goal_r = ik(oculus.left_pose, oculus.right_pose, initial_l, initial_r)
-        head_goal = head_control(oculus.head_pose)
-        goal.data = np.concatenate([ik_goal_r[1:7],
-                                    gripper(oculus.right_joy[1]),
-                                    ik_goal_l[1:7],
-                                    gripper(oculus.left_joy[1]),
->>>>>>> f69943ea2a29e961fbe8f66ad0d2c119ee78bb35
                                     head_goal[:0:-1]])
         initial_l = ik_goal_l
         initial_r = ik_goal_r
